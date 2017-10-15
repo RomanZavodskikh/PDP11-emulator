@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "resource/decode.h"
-#include "resource/vcpu.h"
+#include "resource/emulator.h"
 
 
 int main()
@@ -13,11 +12,9 @@ int main()
 
 	opcode_t opcode = { a };
 
-	Vcpu vcpu = Vcpu();
-	Decoder decoder = Decoder();
-	decoder.decodeAndExecute(&vcpu, opcode);
+	Emulator emulator = Emulator();
 
-
+	scanf_s("%d", &a);
 	return 0;
 }
 

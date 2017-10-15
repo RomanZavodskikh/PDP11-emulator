@@ -90,6 +90,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,11 +146,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="resource\decode.h" />
+    <ClInclude Include="resource\emulator.h" />
     <ClInclude Include="resource\vcpu.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="resource\decode.cpp" />
+    <ClCompile Include="resource\emulator.cpp" />
     <ClCompile Include="resource\vcpu.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
