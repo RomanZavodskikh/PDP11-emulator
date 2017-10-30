@@ -16,14 +16,22 @@ struct exec_status_t
 	bool status;
 };
 
-struct args_t
+struct args_prototype_t
 {
 	INSTR_TYPE instrType = UNDEFINED;
-	
+
 	uint16_t mode1 = 0;
 	uint16_t arg1 = 0;
 	uint16_t mode2 = 0;
 	uint16_t arg2 = 0;
+};
+
+struct args_t
+{
+	INSTR_TYPE instrType = UNDEFINED;
+
+	uint16_t* arg1 = 0;
+	uint16_t* arg2 = 0;
 };
 
 struct opcode_t
@@ -45,7 +53,7 @@ class Decoder
 		Decoder();
 		~Decoder();
 
-		args_t defineArguments(uint16_t instr);
+		args_prototype_t defineArguments(uint16_t instr);
 		bool decodeAndExecute(Vcpu* vcpu, opcode_t opcode, args_t args);
 	private:
 };

@@ -6,10 +6,14 @@ class Vcpu
 		Vcpu();
 		~Vcpu();
 
+		bool n, z, v, c;
+
 		uint16_t	getRegValue(uint16_t numReg);
 		void		setRegValue(uint16_t numReg, uint16_t value);
-		uint16_t Vcpu::getMemValue(uint16_t address);
-		void Vcpu::setMemValue(uint16_t address, uint16_t value);
+		uint16_t*	getRegAddr(uint16_t numReg);
+		uint16_t	getMemValue(uint16_t address);
+		uint16_t*	getMemAddr(uint16_t address);
+		void		setMemValue(uint16_t address, uint16_t value);
 
 	private:
 		uint16_t reg0_;

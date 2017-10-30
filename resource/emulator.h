@@ -17,6 +17,6 @@ class Emulator
 
 		uint16_t* binBuffer_;
 
-		bool fillArguments(args_t* args_prototype, int* currentPointer);
-		uint16_t getArgViaMode(uint16_t arg, uint16_t mode, int* currentPointer);
+		args_t fillArguments(args_prototype_t* args_prototype, int* currentPointer);
+		uint16_t* getArgViaMode(uint16_t arg, uint16_t mode, int* currentPointer);
 };
