@@ -1,20 +1,11 @@
-#include <stdio.h>
-#include <stdint.h>
-#include "resource/emulator.h"
+#include "mainwindow.h"
+#include <QApplication>
 
-
-int main()
+int main(int argc, char *argv[])
 {
-	printf("R1\n");
-	
-	int a;
-	scanf_s("%d", &a);
+    QApplication app(argc, argv);
+    MainWindow window;
+    window.show();
 
-	opcode_t opcode = { a };
-
-	Emulator emulator = Emulator();
-
-	scanf_s("%d", &a);
-	return 0;
+    return app.exec();
 }
-

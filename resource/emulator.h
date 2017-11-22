@@ -8,7 +8,7 @@ class Emulator
 		Emulator();
 		~Emulator ();
 
-		bool loadBin();
+        bool loadBin(std::string pathToBin);
 		bool tryToEmulate();
 
 	private:

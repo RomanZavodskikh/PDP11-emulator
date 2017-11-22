@@ -1,5 +1,7 @@
-#include <stdint.h>
+#include <cstdint>
+#include <cstring>
 #include "emulator.h"
+#include <fstream>
 
 Emulator ::Emulator()
 {
@@ -12,9 +14,43 @@ Emulator::~Emulator()
 	delete[] binBuffer_;
 }
 
-bool Emulator::loadBin()
+bool Emulator::loadBin(std::string pathToBin)
 {
-	binBuffer_ = new uint16_t(1024);
+    std::ifstream fd;
+    fd.open(pathToBin, std::ios::binary | std::ios::ate);
+
+    if (!fd.is_open())
+        return false;
+
+    int size = 0;
+    fd.seekg(0, fd.end);
+    if (fd.tellg() % 2)
+        size = int(fd.tellg()) + 3;
+    else
+        size = int(fd.tellg()) + 2;
+    fd.seekg(0, fd.beg);
+
+    char* temp = new char(size);
+    std::memset(temp, 0, size);
+
+    binBuffer_ = new uint16_t(size/2);
+
+    fd >> temp;
+
+    std::memcpy(binBuffer_, temp, size/2);
+    for (int i = 0; i < size/2; i++)
+        printf("%d == %d\n", binBuffer_[i] & 0xFF, *(temp+2*i + 1));
+    binBuffer_[size/2-1] = 0;
+
+    fd.close();
+    delete[] temp;
+
+
+    // /home/ganzz/12345
+
+   // printf("%s", temp);
+
+
 	return true;
 }
 
