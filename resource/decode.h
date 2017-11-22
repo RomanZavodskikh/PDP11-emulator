@@ -32,6 +32,8 @@ struct args_t
 
 	uint16_t* arg1 = 0;
 	uint16_t* arg2 = 0;
+
+	bool isOneReg = false;
 };
 
 struct opcode_t
@@ -71,3 +73,10 @@ bool bis(Vcpu *vcpu, opcode_t opcode, args_t args);
 bool bisb(Vcpu *vcpu, opcode_t opcode, args_t args);
 bool add(Vcpu *vcpu, opcode_t opcode, args_t args);
 bool sub(Vcpu *vcpu, opcode_t opcode, args_t args);
+
+bool mul(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool div(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool ash(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool ashc(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool xor(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool sob(Vcpu *vcpu, opcode_t opcode, args_t args);

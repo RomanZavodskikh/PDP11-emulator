@@ -17,6 +17,12 @@ decode_op_t decode_table[] =
 	{ 0xf000,  0xd000, bisb,	"bisb"	},
 	{ 0xf000,  0x6000, add,		"add"	},
 	{ 0xf000,  0xe000, sub,		"sub"	},
+	{ 0xfe00,  0x7000, mul,		"mul"	},
+	{ 0xfe00,  0x7200, div,		"div"	},
+	{ 0xfe00,  0x7400, ash,		"ash"	},
+	{ 0xfe00,  0x7600, ashc,	"ashc"	},
+	{ 0xfe00,  0x7800, xor,		"xor"	},
+	{ 0xfe00,  0x7e00, sob,		"sob"	},
 	{ NULL,	   NULL,   nullptr,	"none"	}
 };
 
@@ -222,5 +228,50 @@ bool sub(Vcpu *vcpu, opcode_t opcode, args_t args)
 
 	//TODO: N Z V bits are not checks
 
+	return true;
+}
+
+bool mul(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+	uint32_t res = (*args.arg1) * (*args.arg2);
+	if (args.isOneReg)
+		*args.arg1 = uint16_t(res);
+	else
+	{
+		*args.arg1 = uint16_t(res >> 16);
+		*(args.arg1 + 1) = uint16_t(res);
+	}
+
+	vcpu -> n = res & (1 << 15);
+	vcpu -> z = (res == 0);
+	vcpu -> v = false;
+
+	//TODO: C flag is not changed yet
+
+	return true;
+}
+
+bool div(Vcpu *vcpu, opcode_t opcode, args_t args) 
+{
+	return true;
+}
+
+bool ash(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+	return true;
+}
+
+bool ashc(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+	return true;
+}
+
+bool xor(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+	return true;
+}
+
+bool sob(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
 	return true;
 }
