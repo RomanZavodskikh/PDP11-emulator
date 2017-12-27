@@ -5,25 +5,25 @@
 
 decode_op_t decode_table[] =
 {
-	{ 0xf000,  0x1000, mov,		"mov"	},
-	{ 0xf000,  0x9000, movb,	"movb"	},
-	{ 0xf000,  0x2000, cmp,		"cmp"	},
-	{ 0xf000,  0xa000, cmpb,	"cmpb"	},
-	{ 0xf000,  0x3000, bit,		"bit"	},
-	{ 0xf000,  0xb000, bitb,	"bitb"	},
-	{ 0xf000,  0x4000, bic,		"bic"	},
-	{ 0xf000,  0xc000, bicb,	"bicb"	},
-	{ 0xf000,  0x5000, bis,		"bis"	},
-	{ 0xf000,  0xd000, bisb,	"bisb"	},
-	{ 0xf000,  0x6000, add,		"add"	},
-	{ 0xf000,  0xe000, sub,		"sub"	},
-	{ 0xfe00,  0x7000, mul,		"mul"	},
-	{ 0xfe00,  0x7200, div,		"div"	},
-	{ 0xfe00,  0x7400, ash,		"ash"	},
-	{ 0xfe00,  0x7600, ashc,	"ashc"	},
-	{ 0xfe00,  0x7800, xor,		"xor"	},
-	{ 0xfe00,  0x7e00, sob,		"sob"	},
-	{ NULL,	   NULL,   nullptr,	"none"	}
+    { 0xf000,  0x1000, mov,             "mov"},
+    { 0xf000,  0x9000, movb,            "movb"},
+    { 0xf000,  0x2000, cmp,             "cmp"},
+    { 0xf000,  0xa000, cmpb,            "cmpb"},
+    { 0xf000,  0x3000, bit,             "bit"},
+    { 0xf000,  0xb000, bitb,            "bitb"},
+    { 0xf000,  0x4000, bic,             "bic"},
+    { 0xf000,  0xc000, bicb,            "bicb"},
+    { 0xf000,  0x5000, bis,             "bis"},
+    { 0xf000,  0xd000, bisb,            "bisb"},
+    { 0xf000,  0x6000, add,             "add"},
+    { 0xf000,  0xe000, sub,             "sub"},
+    { 0xfe00,  0x7000, mul,             "mul"},
+    { 0xfe00,  0x7200, div,             "div"},
+    { 0xfe00,  0x7400, ash,             "ash"},
+    { 0xfe00,  0x7600, ashc,            "ashc"},
+    { 0xfe00,  0x7800, xor_instr,       "xor"},
+    { 0xfe00,  0x7e00, sob,             "sob"},
+    { NULL,    NULL,   nullptr,         "none"}
 };
 
 Decoder::Decoder()
@@ -266,7 +266,7 @@ bool ashc(Vcpu *vcpu, opcode_t opcode, args_t args)
 	return true;
 }
 
-bool xor(Vcpu *vcpu, opcode_t opcode, args_t args)
+bool xor_instr(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
 	return true;
 }

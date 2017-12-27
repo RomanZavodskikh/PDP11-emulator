@@ -78,5 +78,5 @@ bool mul(Vcpu *vcpu, opcode_t opcode, args_t args);
 bool div(Vcpu *vcpu, opcode_t opcode, args_t args);
 bool ash(Vcpu *vcpu, opcode_t opcode, args_t args);
 bool ashc(Vcpu *vcpu, opcode_t opcode, args_t args);
-bool xor(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool xor_instr(Vcpu *vcpu, opcode_t opcode, args_t args);
 bool sob(Vcpu *vcpu, opcode_t opcode, args_t args);
