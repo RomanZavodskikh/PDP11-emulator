@@ -30,10 +30,10 @@ bool Emulator::loadBin(std::string pathToBin)
         size = int(fd.tellg()) + 2;
     fd.seekg(0, fd.beg);
 
-    char* temp = new char(size);
+    char* temp = new char[size];
     std::memset(temp, 0, size);
 
-    binBuffer_ = new uint16_t(size/2);
+    binBuffer_ = new uint16_t[size/2];
 
     fd >> temp;
 
