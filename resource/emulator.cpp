@@ -2,6 +2,7 @@
 #include <cstring>
 #include "emulator.h"
 #include <fstream>
+#include <iterator>
 
 Emulator ::Emulator()
 {
@@ -11,63 +12,40 @@ Emulator ::Emulator()
 
 Emulator::~Emulator()
 {
-	delete[] binBuffer_;
 }
 
 bool Emulator::loadBin(std::string pathToBin)
 {
     std::ifstream fd;
-    fd.open(pathToBin, std::ios::binary | std::ios::ate);
+    fd.open(pathToBin, std::ios::binary | std::ios::ate );
 
     if (!fd.is_open())
         return false;
 
-    int size = 0;
-    fd.seekg(0, fd.end);
-    if (fd.tellg() % 2)
-        size = int(fd.tellg()) + 3;
-    else
-        size = int(fd.tellg()) + 2;
-    fd.seekg(0, fd.beg);
+    size_t fileSize = fd.tellg();
+    fd.seekg(0, std::ios::beg);
 
-    char* temp = new char[size];
-    std::memset(temp, 0, size);
-
-    binBuffer_ = new uint16_t[size/2];
-
-    fd >> temp;
-
-    std::memcpy(binBuffer_, temp, size/2);
-    for (int i = 0; i < size/2; i++)
-        printf("%d == %d\n", binBuffer_[i] & 0xFF, *(temp+2*i + 1));
-    binBuffer_[size/2-1] = 0;
+    binBuffer_.resize(fileSize/sizeof(uint16_t));
+    fd.read((char*)binBuffer_.data(), fileSize);
 
     fd.close();
-    delete[] temp;
-
-
-    // /home/ganzz/12345
-
-   // printf("%s", temp);
-
-
 	return true;
 }
 
 bool Emulator::tryToEmulate()
 {
-	int currentPointer = 0;
+    int currentPointer = 0;
 
-	while (currentPointer < 1024)
+    while (currentPointer < binBuffer_.size())
 	{
-		uint16_t instr = binBuffer_[currentPointer++];
-		args_prototype_t args_prototype = decoder_.defineArguments(instr);
+        uint16_t instr = binBuffer_[currentPointer++];
+        args_prototype_t args_prototype = decoder_.defineArguments(instr);
 
-		args_t args = fillArguments(&args_prototype, &currentPointer);
-		decoder_.decodeAndExecute(&vcpu_, opcode_t{ instr }, args);
-	}
+        args_t args = fillArguments(&args_prototype, &currentPointer);
+        decoder_.decodeAndExecute(&vcpu_, opcode_t{ instr }, args);
+    }
 
-	return true;
+    return true;
 }
 
 args_t Emulator::fillArguments(args_prototype_t* args_prototype, int* currentPointer)

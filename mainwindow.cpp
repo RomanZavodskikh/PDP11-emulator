@@ -23,3 +23,8 @@ void MainWindow::on_lineEdit_textChanged(const QString &arg1)
 {
     binFilePath_ = arg1;
 }
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    emulator_.tryToEmulate();
+}

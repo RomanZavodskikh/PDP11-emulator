@@ -1,22 +1,23 @@
 #pragma once
+#include <vector>
 #include "vcpu.h"
 #include "decode.h"
 
 class Emulator
 {
 	public:
-		Emulator();
-		~Emulator ();
+        Emulator();
+        ~Emulator ();
 
         bool loadBin(std::string pathToBin);
-		bool tryToEmulate();
+        bool tryToEmulate();
 
 	private:
-		Vcpu vcpu_;
-		Decoder decoder_;
+        Vcpu vcpu_;
+        Decoder decoder_;
 
-		uint16_t* binBuffer_;
+        std::vector<uint16_t> binBuffer_;
 
-		args_t fillArguments(args_prototype_t* args_prototype, int* currentPointer);
-		uint16_t* getArgViaMode(uint16_t arg, uint16_t mode, int* currentPointer);
+        args_t fillArguments(args_prototype_t* args_prototype, int* currentPointer);
+        uint16_t* getArgViaMode(uint16_t arg, uint16_t mode, int* currentPointer);
 };
