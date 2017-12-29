@@ -38,25 +38,26 @@ bool Emulator::tryToEmulate()
 
     while (currentPointer < binBuffer_.size())
 	{
+        args_prototype_t args_prototype;
+        args_t args;
         uint16_t instr = binBuffer_[currentPointer++];
-        args_prototype_t args_prototype = decoder_.defineArguments(instr);
 
-        args_t args = fillArguments(&args_prototype, &currentPointer);
+        decoder_.defineArguments(&args_prototype, instr);
+        fillArguments(&args, &args_prototype, &currentPointer);
+
         decoder_.decodeAndExecute(&vcpu_, opcode_t{ instr }, args);
     }
 
     return true;
 }
 
-args_t Emulator::fillArguments(args_prototype_t* args_prototype, int* currentPointer)
+args_t Emulator::fillArguments(args_t* args, args_prototype_t* args_prototype, int* currentPointer)
 {
-	args_t args;
-	
 	switch (args_prototype->instrType)
 	{
 		case SINGLE_OPERAND:
 		{
-			args.arg1 = getArgViaMode(args_prototype->arg1, args_prototype->mode1, currentPointer);
+            args->arg1 = getArgViaMode(args_prototype->arg1, args_prototype->mode1, currentPointer);
 			break;
 		}
 		case CONDITIONAL:
@@ -66,16 +67,14 @@ args_t Emulator::fillArguments(args_prototype_t* args_prototype, int* currentPoi
 		case DOUBLE_OPERAND_REG:
 		{
 			break;
-		}
-		case DOUBLE_OPERAND:
-		{
-			args.arg1 = getArgViaMode(args_prototype->arg1, args_prototype->mode1, currentPointer);
-			args.arg2 = getArgViaMode(args_prototype->arg2, args_prototype->mode2, currentPointer);
-			break;
-		}
+        }
+        case DOUBLE_OPERAND:
+        {
+            args->arg1 = getArgViaMode(args_prototype->arg1, args_prototype->mode1, currentPointer);
+            args->arg2 = getArgViaMode(args_prototype->arg2, args_prototype->mode2, currentPointer);
+            break;
+        }
 	}
-
-	return args;
 }
 
 uint16_t* Emulator::getArgViaMode(uint16_t arg, uint16_t mode, int* currentPointer)

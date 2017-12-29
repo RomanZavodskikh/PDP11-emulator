@@ -36,38 +36,34 @@ Decoder::~Decoder()
 
 }
 
-args_prototype_t Decoder::defineArguments(uint16_t instr)
+void Decoder::defineArguments(args_prototype_t* args, uint16_t instr)
 {
-	args_prototype_t args;
-	
-	if ((instr & 0x7800) == 0x0800)
-	{
-		args.instrType = SINGLE_OPERAND;
-		args.mode1 = (instr & 0x0038) >> 3;
-		args.arg1  = (instr & 0x0007);
-	}
-	else if ((instr & 0x7800) == 0x0000)
-	{
-		args.instrType = CONDITIONAL;
-		args.arg1 = (instr & 0x00FF);
-	} 
-	else if ((instr & 0xF000) == 7000)
-	{
-		args.instrType = DOUBLE_OPERAND_REG;
-		args.arg1 = (instr & 0x00E0) >> 6;
-		args.mode2 = (instr & 0x0038) >> 3;
-		args.arg2 = (instr & 0x0007);
-	}
-	else
-	{
-		args.instrType = DOUBLE_OPERAND;
-		args.mode1 = (instr & 0x0700) >> 9;
-		args.arg1 = (instr & 0x00E0) >> 6;
-		args.mode2 = (instr & 0x0038) >> 3;
-		args.arg2 = (instr & 0x0007);
-	}
-
-	return args;
+    if ((instr & 0x7800) == 0x0800)
+    {
+        args->instrType = SINGLE_OPERAND;
+        args->mode1 = (instr & 0x0038) >> 3;
+        args->arg1  = (instr & 0x0007);
+    }
+    else if ((instr & 0x7800) == 0x0000)
+    {
+        args->instrType = CONDITIONAL;
+        args->arg1 = (instr & 0x00FF);
+    }
+    else if ((instr & 0xF000) == 7000)
+    {
+        args->instrType = DOUBLE_OPERAND_REG;
+        args->arg1 = (instr & 0x00E0) >> 6;
+        args->mode2 = (instr & 0x0038) >> 3;
+        args->arg2 = (instr & 0x0007);
+    }
+    else
+    {
+        args->instrType = DOUBLE_OPERAND;
+        args->mode1 = (instr & 0x0700) >> 9;
+        args->arg1 = (instr & 0x00E0) >> 6;
+        args->mode2 = (instr & 0x0038) >> 3;
+        args->arg2 = (instr & 0x0007);
+    }
 }
 
 bool Decoder::decodeAndExecute(Vcpu* vcpu, opcode_t opcode, args_t args)

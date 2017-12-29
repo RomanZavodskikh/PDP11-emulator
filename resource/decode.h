@@ -55,8 +55,8 @@ class Decoder
 		Decoder();
 		~Decoder();
 
-		args_prototype_t defineArguments(uint16_t instr);
-		bool decodeAndExecute(Vcpu* vcpu, opcode_t opcode, args_t args);
+        void defineArguments(args_prototype_t* args_prot, uint16_t instr);
+        bool decodeAndExecute(Vcpu* vcpu, opcode_t opcode, args_t args);
 	private:
 };
 
