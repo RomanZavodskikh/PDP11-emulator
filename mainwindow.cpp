@@ -15,7 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lineEdit_7->setValidator(new QIntValidator(0, 65535));
     ui->lineEdit_8->setValidator(new QIntValidator(0, 65535));
     ui->lineEdit_9->setValidator(new QIntValidator(0, 65535));
-    emulator_.showState(ui);
+    emulator_.setUi(ui);
+    emulator_.showState();
 }
 
 MainWindow::~MainWindow()
@@ -36,4 +37,44 @@ void MainWindow::on_lineEdit_textChanged(const QString &arg1)
 void MainWindow::on_pushButton_2_clicked()
 {
     emulator_.tryToEmulate();
+}
+
+void MainWindow::on_lineEdit_2_textChanged(const QString &arg1)
+{
+    *(emulator_.getVcpu()->getRegAddr(0)) = arg1.toUShort();
+}
+
+void MainWindow::on_lineEdit_3_textChanged(const QString &arg1)
+{
+    *(emulator_.getVcpu()->getRegAddr(1)) = arg1.toUShort();
+}
+
+void MainWindow::on_lineEdit_4_textChanged(const QString &arg1)
+{
+    *(emulator_.getVcpu()->getRegAddr(2)) = arg1.toUShort();
+}
+
+void MainWindow::on_lineEdit_5_textChanged(const QString &arg1)
+{
+    *(emulator_.getVcpu()->getRegAddr(3)) = arg1.toUShort();
+}
+
+void MainWindow::on_lineEdit_6_textChanged(const QString &arg1)
+{
+    *(emulator_.getVcpu()->getRegAddr(4)) = arg1.toUShort();
+}
+
+void MainWindow::on_lineEdit_7_textChanged(const QString &arg1)
+{
+    *(emulator_.getVcpu()->getRegAddr(5)) = arg1.toUShort();
+}
+
+void MainWindow::on_lineEdit_8_textChanged(const QString &arg1)
+{
+    *(emulator_.getVcpu()->getRegAddr(6)) = arg1.toUShort();
+}
+
+void MainWindow::on_lineEdit_9_textChanged(const QString &arg1)
+{
+    *(emulator_.getVcpu()->getRegAddr(7)) = arg1.toUShort();
 }

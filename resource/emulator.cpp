@@ -48,6 +48,7 @@ bool Emulator::tryToEmulate()
         fillArguments(&args, &args_prototype, &currentPointer);
 
         decoder_.decodeAndExecute(&vcpu_, opcode_t{ instr }, args);
+        this->showState();
     }
 
     return true;
@@ -135,7 +136,7 @@ uint16_t* Emulator::getArgViaMode(uint16_t arg, uint16_t mode, int* currentPoint
     };
 }
 
-bool Emulator::showState(Ui::MainWindow *ui)
+bool Emulator::showState()
 {
     ui->lineEdit_2->setText(QString::number(vcpu_.getRegValue(0)));
     ui->lineEdit_3->setText(QString::number(vcpu_.getRegValue(1)));
@@ -145,4 +146,14 @@ bool Emulator::showState(Ui::MainWindow *ui)
     ui->lineEdit_7->setText(QString::number(vcpu_.getRegValue(5)));
     ui->lineEdit_8->setText(QString::number(vcpu_.getRegValue(6)));
     ui->lineEdit_9->setText(QString::number(vcpu_.getRegValue(7)));
+    return true;
+}
+
+bool Emulator::setUi(Ui::MainWindow* ui) {
+    this->ui = ui;
+    return true;
+}
+
+Vcpu* Emulator::getVcpu() {
+    return &(this->vcpu_);
 }
