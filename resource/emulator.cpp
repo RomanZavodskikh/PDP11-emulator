@@ -3,6 +3,8 @@
 #include "emulator.h"
 #include <fstream>
 #include <iterator>
+#include <qstring.h>
+#include "ui_mainwindow.h"
 
 Emulator ::Emulator()
 {
@@ -131,4 +133,16 @@ uint16_t* Emulator::getArgViaMode(uint16_t arg, uint16_t mode, int* currentPoint
             return vcpu_.getMemAddr(address);
         }
     };
+}
+
+bool Emulator::showState(Ui::MainWindow *ui)
+{
+    ui->lineEdit_2->setText(QString::number(vcpu_.getRegValue(0)));
+    ui->lineEdit_3->setText(QString::number(vcpu_.getRegValue(1)));
+    ui->lineEdit_4->setText(QString::number(vcpu_.getRegValue(2)));
+    ui->lineEdit_5->setText(QString::number(vcpu_.getRegValue(3)));
+    ui->lineEdit_6->setText(QString::number(vcpu_.getRegValue(4)));
+    ui->lineEdit_7->setText(QString::number(vcpu_.getRegValue(5)));
+    ui->lineEdit_8->setText(QString::number(vcpu_.getRegValue(6)));
+    ui->lineEdit_9->setText(QString::number(vcpu_.getRegValue(7)));
 }

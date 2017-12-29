@@ -3,6 +3,10 @@
 #include "vcpu.h"
 #include "decode.h"
 
+namespace Ui {
+class MainWindow;
+}
+
 class Emulator
 {
     public:
@@ -11,6 +15,7 @@ class Emulator
 
         bool loadBin(std::string pathToBin);
         bool tryToEmulate();
+        bool showState(Ui::MainWindow* ui);
 
     private:
         Vcpu vcpu_;
