@@ -4,60 +4,60 @@
 
 enum INSTR_TYPE
 {
-	SINGLE_OPERAND,
-	CONDITIONAL,
-	DOUBLE_OPERAND_REG,
-	DOUBLE_OPERAND,
-	UNDEFINED
+    SINGLE_OPERAND,
+    CONDITIONAL,
+    DOUBLE_OPERAND_REG,
+    DOUBLE_OPERAND,
+    UNDEFINED
 };
 
 struct exec_status_t
 {
-	bool status;
+    bool status;
 };
 
 struct args_prototype_t
 {
-	INSTR_TYPE instrType = UNDEFINED;
+    INSTR_TYPE instrType = UNDEFINED;
 
-	uint16_t mode1 = 0;
-	uint16_t arg1 = 0;
-	uint16_t mode2 = 0;
-	uint16_t arg2 = 0;
+    uint16_t mode1 = 0;
+    uint16_t arg1 = 0;
+    uint16_t mode2 = 0;
+    uint16_t arg2 = 0;
 };
 
 struct args_t
 {
-	INSTR_TYPE instrType = UNDEFINED;
+    INSTR_TYPE instrType = UNDEFINED;
 
-	uint16_t* arg1 = 0;
-	uint16_t* arg2 = 0;
+    uint16_t* arg1 = 0;
+    uint16_t* arg2 = 0;
 
-	bool isOneReg = false;
+    bool isOneReg = false;
 };
 
 struct opcode_t
 {
-	uint16_t value;
+    uint16_t value;
 };
 
 struct decode_op_t
 {
-	uint16_t mask;
-	uint16_t value;
-	bool(*execute) (Vcpu *vcpu, opcode_t opcode, args_t args);
-	std::string op_name;
+    uint16_t mask;
+    uint16_t value;
+    bool(*execute) (Vcpu *vcpu, opcode_t opcode, args_t args);
+    std::string op_name;
 };
 
 class Decoder
 {
-	public:
-		Decoder();
-		~Decoder();
+    public:
+        Decoder();
+        ~Decoder();
 
         void defineArguments(args_prototype_t* args_prot, uint16_t instr);
         bool decodeAndExecute(Vcpu* vcpu, opcode_t opcode, args_t args);
-	private:
+    private:
 };
 
 //double-operand instruction test

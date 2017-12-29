@@ -68,206 +68,206 @@ void Decoder::defineArguments(args_prototype_t* args, uint16_t instr)
 
 bool Decoder::decodeAndExecute(Vcpu* vcpu, opcode_t opcode, args_t args)
 {
-	int i = 0;
+    int i = 0;
 
-	while (decode_table[i].execute != nullptr)
-	{
-		if ((decode_table[i].mask & opcode.value) == decode_table[i].value)
-		{
-			std::cout << decode_table[i].op_name << std::endl;
-			return decode_table[i].execute(vcpu, opcode, args);
-		}
+    while (decode_table[i].execute != nullptr)
+    {
+        if ((decode_table[i].mask & opcode.value) == decode_table[i].value)
+        {
+            std::cout << decode_table[i].op_name << std::endl;
+            return decode_table[i].execute(vcpu, opcode, args);
+        }
 
-		i++;
-	}
+        i++;
+    }
 
-	return false;
+    return false;
 }
 
 bool mov(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	*args.arg2 = *args.arg1;
+    *args.arg2 = *args.arg1;
 
-	vcpu -> n = (*args.arg2) & (1 << 15);
-	vcpu -> z = (*args.arg2 == 0);
-	vcpu -> v = false;
-	
-	return true;
+    vcpu -> n = (*args.arg2) & (1 << 15);
+    vcpu -> z = (*args.arg2 == 0);
+    vcpu -> v = false;
+    
+    return true;
 }
 
 bool movb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	uint16_t val = (*args.arg2 & 0xFF00) + (*args.arg1 & 0x00FF);
-	*args.arg2 = val;
+    uint16_t val = (*args.arg2 & 0xFF00) + (*args.arg1 & 0x00FF);
+    *args.arg2 = val;
 
-	vcpu -> n = val & (1 << 7);
-	vcpu -> z = ((val & 0x00FF) == 0);
-	vcpu -> v = false;
-	
-	return true;
+    vcpu -> n = val & (1 << 7);
+    vcpu -> z = ((val & 0x00FF) == 0);
+    vcpu -> v = false;
+    
+    return true;
 }
 
 bool cmp(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	uint32_t res = *args.arg1 - *args.arg2;
+    uint32_t res = *args.arg1 - *args.arg2;
 
-	vcpu -> n = res & (1 << 16);
-	vcpu -> z = (res == 0);
-	vcpu -> c = ((res & (1 << 16)) != 0);
+    vcpu -> n = res & (1 << 16);
+    vcpu -> z = (res == 0);
+    vcpu -> c = ((res & (1 << 16)) != 0);
 
-	//TODO: V bits are not checks
-	
-	return true;
+    //TODO: V bits are not checks
+    
+    return true;
 }
 
 bool cmpb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	uint16_t res = (*args.arg1 & 0x00FF) - (*args.arg2 & 0x00FF);
-	
-	vcpu -> n = res & (1 << 8);
-	vcpu -> z = (res == 0);
-	vcpu -> c = ((res & (1 << 8)) != 0);
+    uint16_t res = (*args.arg1 & 0x00FF) - (*args.arg2 & 0x00FF);
+    
+    vcpu -> n = res & (1 << 8);
+    vcpu -> z = (res == 0);
+    vcpu -> c = ((res & (1 << 8)) != 0);
 
-	//TODO: V bits are not checks
-	
-	return true;
+    //TODO: V bits are not checks
+    
+    return true;
 }
 
 bool bit(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	uint16_t res = (*args.arg1 & *args.arg2);
-	
-	vcpu -> n = ((res & (1 << 15)) != 0);
-	vcpu -> z = (res == 0);
-	vcpu -> v = false;
-	
-	return true;
+    uint16_t res = (*args.arg1 & *args.arg2);
+    
+    vcpu -> n = ((res & (1 << 15)) != 0);
+    vcpu -> z = (res == 0);
+    vcpu -> v = false;
+    
+    return true;
 }
 
 bool bitb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	uint16_t res = (*args.arg1 & *args.arg2) & 0x00FF;
+    uint16_t res = (*args.arg1 & *args.arg2) & 0x00FF;
 
-	vcpu->n = ((res & (1 << 7)) != 0);
-	vcpu->z = (res == 0);
-	vcpu->v = false;
+    vcpu->n = ((res & (1 << 7)) != 0);
+    vcpu->z = (res == 0);
+    vcpu->v = false;
 
-	return true;
+    return true;
 }
 
 bool bic(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	uint16_t res = ((~*args.arg1) & *args.arg2);
-	*args.arg2 = res;
+    uint16_t res = ((~*args.arg1) & *args.arg2);
+    *args.arg2 = res;
 
-	vcpu -> n = ((res & (1 << 15)) != 0);
-	vcpu -> z = (res == 0);
-	vcpu -> v = false;
-	
-	return true;
+    vcpu -> n = ((res & (1 << 15)) != 0);
+    vcpu -> z = (res == 0);
+    vcpu -> v = false;
+    
+    return true;
 }
 
 bool bicb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	uint16_t res = ((~*args.arg1) & *args.arg2) & 0x00FF;
-	*args.arg2 = (0xFF00 & *args.arg2) + res;
+    uint16_t res = ((~*args.arg1) & *args.arg2) & 0x00FF;
+    *args.arg2 = (0xFF00 & *args.arg2) + res;
 
-	vcpu -> n = ((res & (1 << 7)) != 0);
-	vcpu -> z = (res == 0);
-	vcpu -> v = false;
-	
-	return true;
+    vcpu -> n = ((res & (1 << 7)) != 0);
+    vcpu -> z = (res == 0);
+    vcpu -> v = false;
+    
+    return true;
 }
 
 bool bis(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	uint16_t val = (*args.arg1 | *args.arg2);
-	*args.arg2 = val;
+    uint16_t val = (*args.arg1 | *args.arg2);
+    *args.arg2 = val;
 
-	vcpu -> n = ((val & (1 << 15)) != 0);
-	vcpu -> z = (val == 0);
-	vcpu -> v = false;
-	
-	return true;
+    vcpu -> n = ((val & (1 << 15)) != 0);
+    vcpu -> z = (val == 0);
+    vcpu -> v = false;
+    
+    return true;
 }
 
 bool bisb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	uint16_t val = (*args.arg1 | *args.arg2) & 0x00FF;
-	*args.arg2 = val;
+    uint16_t val = (*args.arg1 | *args.arg2) & 0x00FF;
+    *args.arg2 = val;
 
-	vcpu-> n = ((val & (1 << 7)) != 0);
-	vcpu-> z = (val == 0);
-	vcpu-> v = false;
-	
-	return true;
+    vcpu-> n = ((val & (1 << 7)) != 0);
+    vcpu-> z = (val == 0);
+    vcpu-> v = false;
+    
+    return true;
 }
 
 bool add(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	uint32_t res = *args.arg2 + *args.arg1;
-	*args.arg2 = res;
-	
-	vcpu -> c = ((res & (1 << 16)) != 0);
+    uint32_t res = *args.arg2 + *args.arg1;
+    *args.arg2 = res;
+    
+    vcpu -> c = ((res & (1 << 16)) != 0);
 
-	//TODO: N Z V bits are not checks
+    //TODO: N Z V bits are not checks
 
-	return true;
+    return true;
 }
 
 bool sub(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	uint32_t res = *args.arg2 - *args.arg1;
-	*args.arg2 = res;
+    uint32_t res = *args.arg2 - *args.arg1;
+    *args.arg2 = res;
 
-	vcpu -> c = ((res & (1 << 16)) != 0);
+    vcpu -> c = ((res & (1 << 16)) != 0);
 
-	//TODO: N Z V bits are not checks
+    //TODO: N Z V bits are not checks
 
-	return true;
+    return true;
 }
 
 bool mul(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	uint32_t res = (*args.arg1) * (*args.arg2);
-	if (args.isOneReg)
-		*args.arg1 = uint16_t(res);
-	else
-	{
-		*args.arg1 = uint16_t(res >> 16);
-		*(args.arg1 + 1) = uint16_t(res);
-	}
+    uint32_t res = (*args.arg1) * (*args.arg2);
+    if (args.isOneReg)
+        *args.arg1 = uint16_t(res);
+    else
+    {
+        *args.arg1 = uint16_t(res >> 16);
+        *(args.arg1 + 1) = uint16_t(res);
+    }
 
-	vcpu -> n = res & (1 << 15);
-	vcpu -> z = (res == 0);
-	vcpu -> v = false;
+    vcpu -> n = res & (1 << 15);
+    vcpu -> z = (res == 0);
+    vcpu -> v = false;
 
-	//TODO: C flag is not changed yet
+    //TODO: C flag is not changed yet
 
-	return true;
+    return true;
 }
 
 bool div(Vcpu *vcpu, opcode_t opcode, args_t args) 
 {
-	return true;
+    return true;
 }
 
 bool ash(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	return true;
+    return true;
 }
 
 bool ashc(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	return true;
+    return true;
 }
 
 bool xor_instr(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	return true;
+    return true;
 }
 
 bool sob(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
-	return true;
+    return true;
 }

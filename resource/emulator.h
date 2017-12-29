@@ -5,14 +5,14 @@
 
 class Emulator
 {
-	public:
+    public:
         Emulator();
         ~Emulator ();
 
         bool loadBin(std::string pathToBin);
         bool tryToEmulate();
 
-	private:
+    private:
         Vcpu vcpu_;
         Decoder decoder_;
 

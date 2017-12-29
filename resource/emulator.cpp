@@ -6,8 +6,8 @@
 
 Emulator ::Emulator()
 {
-	vcpu_ = Vcpu();
-	decoder_ = Decoder();
+    vcpu_ = Vcpu();
+    decoder_ = Decoder();
 }
 
 Emulator::~Emulator()
@@ -29,7 +29,7 @@ bool Emulator::loadBin(std::string pathToBin)
     fd.read((char*)binBuffer_.data(), fileSize);
 
     fd.close();
-	return true;
+    return true;
 }
 
 bool Emulator::tryToEmulate()
@@ -37,7 +37,7 @@ bool Emulator::tryToEmulate()
     int currentPointer = 0;
 
     while (currentPointer < binBuffer_.size())
-	{
+    {
         args_prototype_t args_prototype;
         args_t args;
         uint16_t instr = binBuffer_[currentPointer++];
@@ -53,20 +53,20 @@ bool Emulator::tryToEmulate()
 
 args_t Emulator::fillArguments(args_t* args, args_prototype_t* args_prototype, int* currentPointer)
 {
-	switch (args_prototype->instrType)
-	{
-		case SINGLE_OPERAND:
-		{
+    switch (args_prototype->instrType)
+    {
+        case SINGLE_OPERAND:
+        {
             args->arg1 = getArgViaMode(args_prototype->arg1, args_prototype->mode1, currentPointer);
-			break;
-		}
-		case CONDITIONAL:
-		{
-			break;
-		}
-		case DOUBLE_OPERAND_REG:
-		{
-			break;
+            break;
+        }
+        case CONDITIONAL:
+        {
+            break;
+        }
+        case DOUBLE_OPERAND_REG:
+        {
+            break;
         }
         case DOUBLE_OPERAND:
         {
@@ -74,61 +74,61 @@ args_t Emulator::fillArguments(args_t* args, args_prototype_t* args_prototype, i
             args->arg2 = getArgViaMode(args_prototype->arg2, args_prototype->mode2, currentPointer);
             break;
         }
-	}
+    }
 }
 
 uint16_t* Emulator::getArgViaMode(uint16_t arg, uint16_t mode, int* currentPointer)
 {
-	switch (mode)
-	{
-		case 0:
-		{
-			uint16_t* value = vcpu_.getRegAddr(arg);
-			return value;
-		}
-		case 1:
-		{
-			uint16_t value = vcpu_.getRegValue(arg);
-			return vcpu_.getMemAddr(value);
-		}
-		case 2:
-		{
-			uint16_t value = vcpu_.getRegValue(arg);
-			vcpu_.setRegValue(arg, value + 1);
-			return vcpu_.getMemAddr(value);
-		}
-		case 3:
-		{
-			uint16_t value = vcpu_.getRegValue(arg);
-			uint16_t address = vcpu_.getMemValue(value);
-			vcpu_.setRegValue(arg, value + 2);
-			return vcpu_.getMemAddr(address);
-		}
-		case 4:
-		{
-			uint16_t value = vcpu_.getRegValue(arg) - 1;
-			vcpu_.setRegValue(arg, value);
-			return vcpu_.getMemAddr(value);
-		}
-		case 5:
-		{
-			uint16_t value = vcpu_.getRegValue(arg) - 2;
-			vcpu_.setRegValue(arg, value);
-			uint16_t address = vcpu_.getMemValue(value);
-			return vcpu_.getMemAddr(address);
-		}
-		case 6:
-		{
-			uint16_t value = vcpu_.getRegValue(arg) + binBuffer_[*currentPointer];
-			*currentPointer++;
-			return vcpu_.getMemAddr(value);
-		}
-		case 7:
-		{
-			uint16_t value = vcpu_.getRegValue(arg) + binBuffer_[*currentPointer];
-			*currentPointer++;
-			uint16_t address = vcpu_.getMemValue(value);
-			return vcpu_.getMemAddr(address);
-		}
-	};
+    switch (mode)
+    {
+        case 0:
+        {
+            uint16_t* value = vcpu_.getRegAddr(arg);
+            return value;
+        }
+        case 1:
+        {
+            uint16_t value = vcpu_.getRegValue(arg);
+            return vcpu_.getMemAddr(value);
+        }
+        case 2:
+        {
+            uint16_t value = vcpu_.getRegValue(arg);
+            vcpu_.setRegValue(arg, value + 1);
+            return vcpu_.getMemAddr(value);
+        }
+        case 3:
+        {
+            uint16_t value = vcpu_.getRegValue(arg);
+            uint16_t address = vcpu_.getMemValue(value);
+            vcpu_.setRegValue(arg, value + 2);
+            return vcpu_.getMemAddr(address);
+        }
+        case 4:
+        {
+            uint16_t value = vcpu_.getRegValue(arg) - 1;
+            vcpu_.setRegValue(arg, value);
+            return vcpu_.getMemAddr(value);
+        }
+        case 5:
+        {
+            uint16_t value = vcpu_.getRegValue(arg) - 2;
+            vcpu_.setRegValue(arg, value);
+            uint16_t address = vcpu_.getMemValue(value);
+            return vcpu_.getMemAddr(address);
+        }
+        case 6:
+        {
+            uint16_t value = vcpu_.getRegValue(arg) + binBuffer_[*currentPointer];
+            *currentPointer++;
+            return vcpu_.getMemAddr(value);
+        }
+        case 7:
+        {
+            uint16_t value = vcpu_.getRegValue(arg) + binBuffer_[*currentPointer];
+            *currentPointer++;
+            uint16_t address = vcpu_.getMemValue(value);
+            return vcpu_.getMemAddr(address);
+        }
+    };
 }
