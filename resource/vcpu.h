@@ -1,5 +1,7 @@
 #pragma once
 
+#include "qstring.h"
+
 const int MEM_SIZE = 32 * 1024;
 const int REG_AMOUNT = 8;
 
@@ -17,6 +19,7 @@ class Vcpu
         uint16_t    getMemValue(uint16_t address);
         uint16_t*    getMemAddr(uint16_t address);
         void        setMemValue(uint16_t address, uint16_t value);
+        bool        getMemString(QString& str, uint16_t address = 0);
 
     private:
         uint16_t* reg0_;

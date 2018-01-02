@@ -71,6 +71,9 @@
       <height>261</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">QTextBrowser {padding-left: 30px;}</string>
+    </property>
    </widget>
    <widget class="QScrollBar" name="verticalScrollBar">
     <property name="geometry">

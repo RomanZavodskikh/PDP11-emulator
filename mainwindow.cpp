@@ -4,7 +4,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    emulator_()
 {
     ui->setupUi(this);
     ui->lineEdit_2->setValidator(new QIntValidator(0, 65535));

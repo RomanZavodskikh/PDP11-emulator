@@ -150,6 +150,10 @@ bool Emulator::showState()
     ui->lineEdit_7->setText(QString::number(vcpu_.getRegValue(5)));
     ui->lineEdit_8->setText(QString::number(vcpu_.getRegValue(6)));
     ui->lineEdit_9->setText(QString::number(vcpu_.getRegValue(7)));
+
+    QString memDump("");
+    vcpu_.getMemString(memDump);
+    ui->textBrowser->setText(memDump);
     qApp->processEvents();
     return true;
 }
