@@ -28,8 +28,7 @@ bool Emulator::loadBin(std::string pathToBin)
     size_t fileSize = fd.tellg();
     fd.seekg(0, std::ios::beg);
 
-    binBuffer_.resize(fileSize/sizeof(uint16_t));
-    fd.read((char*)binBuffer_.data(), fileSize);
+    fd.read((char*)getVcpu()->getMemAddr(0), fileSize);
 
     fd.close();
     return true;
@@ -38,13 +37,14 @@ bool Emulator::loadBin(std::string pathToBin)
 bool Emulator::tryToEmulate()
 {
     int currentPointer = 0;
+    this->getVcpu()->setRegValue(7, 0);
     this->dumpState();
 
-    while (currentPointer < binBuffer_.size())
+    while (true)
     {
         args_prototype_t args_prototype;
         args_t args;
-        uint16_t instr = binBuffer_[currentPointer++];
+        uint16_t instr = getVcpu()->getMemValue(getVcpu()->getRegValue(7) / 2);
 
         decoder_.defineArguments(&args_prototype, instr);
         fillArguments(&args, &args_prototype, &currentPointer);
@@ -53,6 +53,7 @@ bool Emulator::tryToEmulate()
         this->dumpState();
         this->showState();
         QThread::sleep(1);
+        *getVcpu()->getRegAddr(7) += 2;
     }
 
     return true;
@@ -126,14 +127,16 @@ uint16_t* Emulator::getArgViaMode(uint16_t arg, uint16_t mode, int* currentPoint
         }
         case 6:
         {
-            uint16_t value = vcpu_.getRegValue(arg) + binBuffer_[*currentPointer];
-            *currentPointer++;
+            uint16_t value = vcpu_.getRegValue(arg) + vcpu_.getMemValue(vcpu_.getRegValue(7));
+            uint16_t* pc_addr = vcpu_.getMemAddr(vcpu_.getRegValue(7));
+            *pc_addr += 2;
             return vcpu_.getMemAddr(value);
         }
         case 7:
         {
-            uint16_t value = vcpu_.getRegValue(arg) + binBuffer_[*currentPointer];
-            *currentPointer++;
+            uint16_t value = vcpu_.getRegValue(arg) + vcpu_.getMemValue(vcpu_.getRegValue(7));
+            uint16_t* pc_addr = vcpu_.getMemAddr(vcpu_.getRegValue(7));
+            *pc_addr += 2;
             uint16_t address = vcpu_.getMemValue(value);
             return vcpu_.getMemAddr(address);
         }
