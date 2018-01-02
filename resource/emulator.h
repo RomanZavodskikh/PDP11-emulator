@@ -16,6 +16,7 @@ class Emulator
         bool loadBin(std::string pathToBin);
         bool tryToEmulate();
         bool showState();
+        bool dumpState();
         bool setUi(Ui::MainWindow* ui);
 
         Vcpu* getVcpu();

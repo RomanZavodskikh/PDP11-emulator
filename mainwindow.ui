@@ -264,7 +264,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>R1 =</string>
+     <string>R0 =</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -277,7 +277,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>R3 =</string>
+     <string>R2 =</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -290,7 +290,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>R2 =</string>
+     <string>R1 =</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_4">
@@ -303,7 +303,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>R5 =</string>
+     <string>R4 =</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_5">
@@ -316,7 +316,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>R7 =</string>
+     <string>R6 =</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_6">
@@ -329,7 +329,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>R8 =</string>
+     <string>R7 =</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_7">
@@ -342,7 +342,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>R4 =</string>
+     <string>R3 =</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_8">
@@ -355,7 +355,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>R6 =</string>
+     <string>R5 =</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEdit_2">
@@ -445,7 +445,7 @@
      <x>0</x>
      <y>0</y>
      <width>1036</width>
-     <height>19</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

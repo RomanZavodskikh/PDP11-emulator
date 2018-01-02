@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iterator>
 #include <qstring.h>
+#include <qthread.h>
 #include "ui_mainwindow.h"
 
 Emulator ::Emulator()
@@ -37,6 +38,7 @@ bool Emulator::loadBin(std::string pathToBin)
 bool Emulator::tryToEmulate()
 {
     int currentPointer = 0;
+    this->dumpState();
 
     while (currentPointer < binBuffer_.size())
     {
@@ -48,7 +50,9 @@ bool Emulator::tryToEmulate()
         fillArguments(&args, &args_prototype, &currentPointer);
 
         decoder_.decodeAndExecute(&vcpu_, opcode_t{ instr }, args);
+        this->dumpState();
         this->showState();
+        QThread::sleep(1);
     }
 
     return true;
@@ -146,7 +150,22 @@ bool Emulator::showState()
     ui->lineEdit_7->setText(QString::number(vcpu_.getRegValue(5)));
     ui->lineEdit_8->setText(QString::number(vcpu_.getRegValue(6)));
     ui->lineEdit_9->setText(QString::number(vcpu_.getRegValue(7)));
+    qApp->processEvents();
     return true;
+}
+
+bool Emulator::dumpState()
+{
+    std::cout << "============STATE DUMP============\n";
+    std::cout << "  R0 = " << vcpu_.getRegValue(0) << std::endl;
+    std::cout << "  R1 = " << vcpu_.getRegValue(1) << std::endl;
+    std::cout << "  R2 = " << vcpu_.getRegValue(2) << std::endl;
+    std::cout << "  R3 = " << vcpu_.getRegValue(3) << std::endl;
+    std::cout << "  R4 = " << vcpu_.getRegValue(4) << std::endl;
+    std::cout << "  R5 = " << vcpu_.getRegValue(5) << std::endl;
+    std::cout << "  R6 = " << vcpu_.getRegValue(6) << std::endl;
+    std::cout << "  R7 = " << vcpu_.getRegValue(7) << std::endl;
+    std::cout << "============   END    ============\n";
 }
 
 bool Emulator::setUi(Ui::MainWindow* ui) {

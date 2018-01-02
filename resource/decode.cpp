@@ -264,6 +264,7 @@ bool ashc(Vcpu *vcpu, opcode_t opcode, args_t args)
 
 bool xor_instr(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    *args.arg2 ^= *args.arg1;
     return true;
 }
 
