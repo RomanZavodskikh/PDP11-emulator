@@ -56,13 +56,18 @@ bool Emulator::tryToEmulate()
         {
             QThread::msleep(1);
             QCoreApplication::processEvents();
+            if (emulating_ == false)
+                goto exit0;
         }
         *getVcpu()->getRegAddr(7) += 2;
         this->dumpState();
         this->showState();
         QCoreApplication::processEvents();
+        if (emulating_ == false)
+            goto exit0;
     }
 
+exit0:
     return true;
 }
 

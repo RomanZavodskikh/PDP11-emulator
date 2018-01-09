@@ -37,6 +37,9 @@
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEdit">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -49,7 +52,10 @@
      <bool>false</bool>
     </property>
     <property name="text">
-     <string>Insert full path to bin file</string>
+     <string>Press Upload button to choose binary file</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QOpenGLWidget" name="openGLWidget">

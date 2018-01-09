@@ -1,4 +1,5 @@
 #include <iostream>
+#include <QFileDialog>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -27,8 +28,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    emulator_.loadBin(binFilePath_.toStdString());
-    emulator_.showState();
+    QFileDialog* fileDialog = new QFileDialog(this);
+    fileDialog->show();
+    if (fileDialog->exec())
+    {
+        emulator_.loadBin(fileDialog->selectedFiles().at(0).toStdString());
+        ui->lineEdit->setText(fileDialog->selectedFiles().at(0));
+        emulator_.showState();
+    }
 }
 
 void MainWindow::on_lineEdit_textChanged(const QString &arg1)
