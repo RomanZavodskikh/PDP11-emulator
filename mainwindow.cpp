@@ -28,6 +28,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_clicked()
 {
     emulator_.loadBin(binFilePath_.toStdString());
+    emulator_.showState();
 }
 
 void MainWindow::on_lineEdit_textChanged(const QString &arg1)
@@ -78,4 +79,9 @@ void MainWindow::on_lineEdit_8_textChanged(const QString &arg1)
 void MainWindow::on_lineEdit_9_textChanged(const QString &arg1)
 {
     *(emulator_.getVcpu()->getRegAddr(7)) = arg1.toUShort();
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    emulator_.stop();
 }

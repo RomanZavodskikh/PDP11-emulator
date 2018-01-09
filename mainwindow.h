@@ -41,6 +41,8 @@ private slots:
 
     void on_lineEdit_9_textChanged(const QString &arg1);
 
+    void on_pushButton_3_clicked();
+
 private:
     Ui::MainWindow *ui;
     QString binFilePath_;

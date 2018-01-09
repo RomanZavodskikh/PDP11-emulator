@@ -87,7 +87,7 @@ bool Vcpu::getMemString(QString& str, uint16_t address)
     for (size_t i = 0; i < 8; i++)
     {
         str += "0x" + QString::number(2*(address+i), 16) + ": ";
-        str += QString::number(this->getMemValue(address+i));
+        str += QString::number(this->getMemValue(address+i), 16);
         str += "\n";
     }
     return true;
