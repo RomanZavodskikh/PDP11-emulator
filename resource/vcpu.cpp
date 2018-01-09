@@ -84,10 +84,13 @@ void Vcpu::setMemValue(uint16_t address, uint16_t value)
 
 bool Vcpu::getMemString(QString& str, uint16_t address)
 {
-    for (size_t i = 0; i < 8; i++)
+    for (size_t i = 0; i < MEM_SIZE; i++)
     {
-        str += "0x" + QString::number(2*(address+i), 16) + ": ";
-        str += QString::number(this->getMemValue(address+i), 16);
+        str += "0x" + QString("%1").arg(2*(address+i), 4, 16, QChar('0')) + ": ";
+        uint16_t word = this->getMemValue(address+i);
+        uint8_t lo = word & 0xFF;
+        uint8_t hi = word >> 8;
+        str += QString("%1").arg(lo, 2, 16, QChar('0')) + " " + QString("%1").arg(hi, 2, 16, QChar('0'));
         str += "\n";
     }
     return true;

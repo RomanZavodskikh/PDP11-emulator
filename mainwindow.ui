@@ -73,25 +73,21 @@
      <rect>
       <x>610</x>
       <y>70</y>
-      <width>391</width>
+      <width>411</width>
       <height>261</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>DejaVu Sans Mono</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="styleSheet">
      <string notr="true">QTextBrowser {padding-left: 30px;}</string>
-    </property>
-   </widget>
-   <widget class="QScrollBar" name="verticalScrollBar">
-    <property name="geometry">
-     <rect>
-      <x>1010</x>
-      <y>70</y>
-      <width>20</width>
-      <height>261</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_2">
