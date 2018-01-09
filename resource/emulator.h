@@ -16,6 +16,8 @@ class Emulator
         bool loadBin(std::string pathToBin);
         bool tryToEmulate();
         bool stop();
+        bool step();
+        bool reset();
         bool showState();
         bool dumpState();
         bool setUi(Ui::MainWindow* ui);

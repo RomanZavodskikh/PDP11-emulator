@@ -92,3 +92,12 @@ bool Vcpu::getMemString(QString& str, uint16_t address)
     }
     return true;
 }
+
+bool Vcpu::reset()
+{
+    for (size_t i = 0; i < REG_AMOUNT; i++)
+    {
+        *(getRegAddr(i)) = 0;
+    }
+    return true;
+}

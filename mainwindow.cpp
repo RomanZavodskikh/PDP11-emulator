@@ -92,3 +92,13 @@ void MainWindow::on_pushButton_3_clicked()
 {
     emulator_.stop();
 }
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    emulator_.step();
+}
+
+void MainWindow::on_pushButton_5_clicked()
+{
+    emulator_.reset();
+}

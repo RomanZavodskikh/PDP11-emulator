@@ -38,7 +38,6 @@ bool Emulator::loadBin(std::string pathToBin)
 bool Emulator::tryToEmulate()
 {
     int currentPointer = 0;
-    this->getVcpu()->setRegValue(7, 0);
     this->dumpState();
     emulating_ = true;
 
@@ -46,7 +45,8 @@ bool Emulator::tryToEmulate()
     {
         args_prototype_t args_prototype;
         args_t args;
-        uint16_t instr = getVcpu()->getMemValue(getVcpu()->getRegValue(7) / 2);
+        currentPointer = getVcpu()->getRegValue(7) / 2;
+        uint16_t instr = getVcpu()->getMemValue(currentPointer);
 
         decoder_.defineArguments(&args_prototype, instr);
         fillArguments(&args, &args_prototype, &currentPointer);
@@ -69,6 +69,23 @@ bool Emulator::tryToEmulate()
 
 exit0:
     return true;
+}
+
+bool Emulator::step()
+{
+    args_prototype_t args_prototype;
+    args_t args;
+    int currentPointer = getVcpu()->getRegValue(7) / 2;
+    uint16_t instr = getVcpu()->getMemValue(currentPointer);
+
+    decoder_.defineArguments(&args_prototype, instr);
+    fillArguments(&args, &args_prototype, &currentPointer);
+
+    decoder_.decodeAndExecute(vcpu_, opcode_t{ instr }, args);
+    *getVcpu()->getRegAddr(7) += 2;
+    this->dumpState();
+    this->showState();
+    QCoreApplication::processEvents();
 }
 
 args_t Emulator::fillArguments(args_t* args, args_prototype_t* args_prototype, int* currentPointer)
@@ -199,5 +216,12 @@ Vcpu* Emulator::getVcpu() {
 bool Emulator::stop()
 {
     emulating_ = false;
+    return true;
+}
+
+bool Emulator::reset()
+{
+    getVcpu()->reset();
+    showState();
     return true;
 }
