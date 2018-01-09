@@ -52,10 +52,15 @@ bool Emulator::tryToEmulate()
         fillArguments(&args, &args_prototype, &currentPointer);
 
         decoder_.decodeAndExecute(vcpu_, opcode_t{ instr }, args);
-        QThread::sleep(1);
+        for (size_t i = 0; i < 1000; i++)
+        {
+            QThread::msleep(1);
+            QCoreApplication::processEvents();
+        }
         *getVcpu()->getRegAddr(7) += 2;
         this->dumpState();
         this->showState();
+        QCoreApplication::processEvents();
     }
 
     return true;
