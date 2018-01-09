@@ -60,7 +60,7 @@ void Decoder::defineArguments(args_prototype_t* args, uint16_t instr)
     {
         args->instrType = DOUBLE_OPERAND;
         args->mode1 = (instr & 0x0700) >> 9;
-        args->arg1 = (instr & 0x00E0) >> 6;
+        args->arg1 = (instr & 0x01C0) >> 6;
         args->mode2 = (instr & 0x0038) >> 3;
         args->arg2 = (instr & 0x0007);
     }

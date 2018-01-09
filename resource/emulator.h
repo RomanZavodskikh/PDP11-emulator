@@ -23,7 +23,7 @@ class Emulator
         Vcpu* getVcpu();
 
     private:
-        Vcpu vcpu_;
+        Vcpu* vcpu_;
         Decoder decoder_;
 
         Ui::MainWindow* ui;

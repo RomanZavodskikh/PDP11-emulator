@@ -7,14 +7,15 @@
 #include <qthread.h>
 #include "ui_mainwindow.h"
 
-Emulator ::Emulator()
+Emulator ::Emulator():emulating_(false)
 {
-    vcpu_ = Vcpu();
+    vcpu_ = new Vcpu();
     decoder_ = Decoder();
 }
 
 Emulator::~Emulator()
 {
+    delete vcpu_;
 }
 
 bool Emulator::loadBin(std::string pathToBin)
@@ -39,8 +40,9 @@ bool Emulator::tryToEmulate()
     int currentPointer = 0;
     this->getVcpu()->setRegValue(7, 0);
     this->dumpState();
+    emulating_ = true;
 
-    while (true)
+    while (emulating_)
     {
         args_prototype_t args_prototype;
         args_t args;
@@ -49,11 +51,11 @@ bool Emulator::tryToEmulate()
         decoder_.defineArguments(&args_prototype, instr);
         fillArguments(&args, &args_prototype, &currentPointer);
 
-        decoder_.decodeAndExecute(&vcpu_, opcode_t{ instr }, args);
-        this->dumpState();
-        this->showState();
+        decoder_.decodeAndExecute(vcpu_, opcode_t{ instr }, args);
         QThread::sleep(1);
         *getVcpu()->getRegAddr(7) += 2;
+        this->dumpState();
+        this->showState();
     }
 
     return true;
@@ -91,71 +93,71 @@ uint16_t* Emulator::getArgViaMode(uint16_t arg, uint16_t mode, int* currentPoint
     {
         case 0:
         {
-            uint16_t* value = vcpu_.getRegAddr(arg);
+            uint16_t* value = vcpu_->getRegAddr(arg);
             return value;
         }
         case 1:
         {
-            uint16_t value = vcpu_.getRegValue(arg);
-            return vcpu_.getMemAddr(value);
+            uint16_t value = vcpu_->getRegValue(arg);
+            return vcpu_->getMemAddr(value);
         }
         case 2:
         {
-            uint16_t value = vcpu_.getRegValue(arg);
-            vcpu_.setRegValue(arg, value + 1);
-            return vcpu_.getMemAddr(value);
+            uint16_t value = vcpu_->getRegValue(arg);
+            vcpu_->setRegValue(arg, value + 1);
+            return vcpu_->getMemAddr(value);
         }
         case 3:
         {
-            uint16_t value = vcpu_.getRegValue(arg);
-            uint16_t address = vcpu_.getMemValue(value);
-            vcpu_.setRegValue(arg, value + 2);
-            return vcpu_.getMemAddr(address);
+            uint16_t value = vcpu_->getRegValue(arg);
+            uint16_t address = vcpu_->getMemValue(value);
+            vcpu_->setRegValue(arg, value + 2);
+            return vcpu_->getMemAddr(address);
         }
         case 4:
         {
-            uint16_t value = vcpu_.getRegValue(arg) - 1;
-            vcpu_.setRegValue(arg, value);
-            return vcpu_.getMemAddr(value);
+            uint16_t value = vcpu_->getRegValue(arg) - 1;
+            vcpu_->setRegValue(arg, value);
+            return vcpu_->getMemAddr(value);
         }
         case 5:
         {
-            uint16_t value = vcpu_.getRegValue(arg) - 2;
-            vcpu_.setRegValue(arg, value);
-            uint16_t address = vcpu_.getMemValue(value);
-            return vcpu_.getMemAddr(address);
+            uint16_t value = vcpu_->getRegValue(arg) - 2;
+            vcpu_->setRegValue(arg, value);
+            uint16_t address = vcpu_->getMemValue(value);
+            return vcpu_->getMemAddr(address);
         }
         case 6:
         {
-            uint16_t value = vcpu_.getRegValue(arg) + vcpu_.getMemValue(vcpu_.getRegValue(7));
-            uint16_t* pc_addr = vcpu_.getMemAddr(vcpu_.getRegValue(7));
+            uint16_t value = vcpu_->getRegValue(arg) + vcpu_->getMemValue(vcpu_->getRegValue(7));
+            uint16_t* pc_addr = vcpu_->getMemAddr(vcpu_->getRegValue(7));
             *pc_addr += 2;
-            return vcpu_.getMemAddr(value);
+            return vcpu_->getMemAddr(value);
         }
         case 7:
         {
-            uint16_t value = vcpu_.getRegValue(arg) + vcpu_.getMemValue(vcpu_.getRegValue(7));
-            uint16_t* pc_addr = vcpu_.getMemAddr(vcpu_.getRegValue(7));
+            uint16_t value = vcpu_->getRegValue(arg) + vcpu_->getMemValue(vcpu_->getRegValue(7));
+            uint16_t* pc_addr = vcpu_->getMemAddr(vcpu_->getRegValue(7));
             *pc_addr += 2;
-            uint16_t address = vcpu_.getMemValue(value);
-            return vcpu_.getMemAddr(address);
+            uint16_t address = vcpu_->getMemValue(value);
+            return vcpu_->getMemAddr(address);
         }
     };
 }
 
 bool Emulator::showState()
 {
-    ui->lineEdit_2->setText(QString::number(vcpu_.getRegValue(0)));
-    ui->lineEdit_3->setText(QString::number(vcpu_.getRegValue(1)));
-    ui->lineEdit_4->setText(QString::number(vcpu_.getRegValue(2)));
-    ui->lineEdit_5->setText(QString::number(vcpu_.getRegValue(3)));
-    ui->lineEdit_6->setText(QString::number(vcpu_.getRegValue(4)));
-    ui->lineEdit_7->setText(QString::number(vcpu_.getRegValue(5)));
-    ui->lineEdit_8->setText(QString::number(vcpu_.getRegValue(6)));
-    ui->lineEdit_9->setText(QString::number(vcpu_.getRegValue(7)));
+    ui->lineEdit_2->setText(QString::number(vcpu_->getRegValue(0)));
+    ui->lineEdit_3->setText(QString::number(vcpu_->getRegValue(1)));
+    ui->lineEdit_4->setText(QString::number(vcpu_->getRegValue(2)));
+    ui->lineEdit_5->setText(QString::number(vcpu_->getRegValue(3)));
+    ui->lineEdit_6->setText(QString::number(vcpu_->getRegValue(4)));
+    ui->lineEdit_7->setText(QString::number(vcpu_->getRegValue(5)));
+    ui->lineEdit_8->setText(QString::number(vcpu_->getRegValue(6)));
+    ui->lineEdit_9->setText(QString::number(vcpu_->getRegValue(7)));
 
     QString memDump("");
-    vcpu_.getMemString(memDump);
+    vcpu_->getMemString(memDump);
     ui->textBrowser->setText(memDump);
     qApp->processEvents();
     return true;
@@ -164,14 +166,14 @@ bool Emulator::showState()
 bool Emulator::dumpState()
 {
     std::cout << "============STATE DUMP============\n";
-    std::cout << "  R0 = " << vcpu_.getRegValue(0) << std::endl;
-    std::cout << "  R1 = " << vcpu_.getRegValue(1) << std::endl;
-    std::cout << "  R2 = " << vcpu_.getRegValue(2) << std::endl;
-    std::cout << "  R3 = " << vcpu_.getRegValue(3) << std::endl;
-    std::cout << "  R4 = " << vcpu_.getRegValue(4) << std::endl;
-    std::cout << "  R5 = " << vcpu_.getRegValue(5) << std::endl;
-    std::cout << "  R6 = " << vcpu_.getRegValue(6) << std::endl;
-    std::cout << "  R7 = " << vcpu_.getRegValue(7) << std::endl;
+    std::cout << "  R0 = " << vcpu_->getRegValue(0) << std::endl;
+    std::cout << "  R1 = " << vcpu_->getRegValue(1) << std::endl;
+    std::cout << "  R2 = " << vcpu_->getRegValue(2) << std::endl;
+    std::cout << "  R3 = " << vcpu_->getRegValue(3) << std::endl;
+    std::cout << "  R4 = " << vcpu_->getRegValue(4) << std::endl;
+    std::cout << "  R5 = " << vcpu_->getRegValue(5) << std::endl;
+    std::cout << "  R6 = " << vcpu_->getRegValue(6) << std::endl;
+    std::cout << "  R7 = " << vcpu_->getRegValue(7) << std::endl;
     std::cout << "============   END    ============\n";
 }
 
@@ -181,5 +183,11 @@ bool Emulator::setUi(Ui::MainWindow* ui) {
 }
 
 Vcpu* Emulator::getVcpu() {
-    return &(this->vcpu_);
+    return (this->vcpu_);
+}
+
+bool Emulator::stop()
+{
+    emulating_ = false;
+    return true;
 }
