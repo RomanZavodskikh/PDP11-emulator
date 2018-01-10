@@ -59,6 +59,7 @@ class Decoder
         bool decodeAndExecute(Vcpu* vcpu, opcode_t opcode, args_t args);
         bool decodeAndDisasm(Vcpu* vcpu, opcode_t opcode, args_prototype_t args, QString& ret_str);
     private:
+        bool appendOperand(QString &str, args_prototype_t &args_prototype, uint16_t num);
 };
 
 //double-operand instruction test

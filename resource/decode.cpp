@@ -84,6 +84,57 @@ bool Decoder::decodeAndExecute(Vcpu* vcpu, opcode_t opcode, args_t args)
     return false;
 }
 
+bool Decoder::appendOperand(QString &str, args_prototype_t &args_prototype, uint16_t num)
+{
+    uint16_t mode = (num == 1) ? args_prototype.mode1 : args_prototype.mode2;
+    uint16_t arg = (num == 1) ? args_prototype.arg1 : args_prototype.arg2;
+    switch (mode) {
+        case 0:
+        {
+            str += " R" + QString::number(arg);
+            break;
+        }
+        case 1:
+        {
+            str += " (R" + QString::number(arg) + ")";
+            break;
+        }
+        case 2:
+        {
+            str += " (R" + QString::number(arg) + ")+";
+            break;
+        }
+        case 3:
+        {
+            str += " @(R" + QString::number(arg) + ")+";
+            break;
+        }
+        case 4:
+        {
+            str += " -(R" + QString::number(arg) + ")";
+            break;
+        }
+        case 5:
+        {
+            str += " @-(R" + QString::number(arg) + ")";
+            break;
+        }
+        case 6:
+        {
+            str += " X(R" + QString::number(arg) + ")";
+            break;
+        }
+        case 7:
+        {
+            str += " @X(R" + QString::number(arg) + ")";
+            break;
+        }
+        default: return false;
+    }
+
+    return true;
+}
+
 bool Decoder::decodeAndDisasm(Vcpu* vcpu, opcode_t opcode, args_prototype_t args_prototype, QString& ret_str)
 {
     int i = 0;
@@ -93,8 +144,9 @@ bool Decoder::decodeAndDisasm(Vcpu* vcpu, opcode_t opcode, args_prototype_t args
         if ((decode_table[i].mask & opcode.value) == decode_table[i].value)
         {
             ret_str = QString(decode_table[i].op_name.c_str());
-            ret_str += " R" + QString::number(args_prototype.arg1) +
-                    ", R" + QString::number(args_prototype.arg2);
+            appendOperand(ret_str, args_prototype, 1);
+            ret_str += ",";
+            appendOperand(ret_str, args_prototype, 2);
             break;
         }
 
