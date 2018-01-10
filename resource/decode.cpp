@@ -84,6 +84,26 @@ bool Decoder::decodeAndExecute(Vcpu* vcpu, opcode_t opcode, args_t args)
     return false;
 }
 
+bool Decoder::decodeAndDisasm(Vcpu* vcpu, opcode_t opcode, args_prototype_t args_prototype, QString& ret_str)
+{
+    int i = 0;
+
+    while (decode_table[i].execute != nullptr)
+    {
+        if ((decode_table[i].mask & opcode.value) == decode_table[i].value)
+        {
+            ret_str = QString(decode_table[i].op_name.c_str());
+            ret_str += " R" + QString::number(args_prototype.arg1) +
+                    ", R" + QString::number(args_prototype.arg2);
+            break;
+        }
+
+        i++;
+    }
+
+    return false;
+}
+
 bool mov(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
     *args.arg2 = *args.arg1;

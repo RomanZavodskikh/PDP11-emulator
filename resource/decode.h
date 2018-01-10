@@ -57,6 +57,7 @@ class Decoder
 
         void defineArguments(args_prototype_t* args_prot, uint16_t instr);
         bool decodeAndExecute(Vcpu* vcpu, opcode_t opcode, args_t args);
+        bool decodeAndDisasm(Vcpu* vcpu, opcode_t opcode, args_prototype_t args, QString& ret_str);
     private:
 };
 

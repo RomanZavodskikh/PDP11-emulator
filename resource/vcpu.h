@@ -22,6 +22,7 @@ class Vcpu
         uint16_t*    getMemAddr(uint16_t address);
         void        setMemValue(uint16_t address, uint16_t value);
         bool        getMemString(QString& str, uint16_t address = 0);
+        bool        getDisasmString(QString& str, uint16_t address = 0);
         bool        reset();
 
         uchar* getFrameBuffer();

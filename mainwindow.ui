@@ -93,8 +93,8 @@
    <widget class="QPushButton" name="pushButton_2">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>570</y>
+      <x>190</x>
+      <y>500</y>
       <width>321</width>
       <height>51</height>
      </rect>
@@ -446,8 +446,8 @@
    <widget class="QPushButton" name="pushButton_3">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>520</y>
+      <x>190</x>
+      <y>450</y>
       <width>321</width>
       <height>51</height>
      </rect>
@@ -459,8 +459,8 @@
    <widget class="QPushButton" name="pushButton_4">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>470</y>
+      <x>190</x>
+      <y>400</y>
       <width>321</width>
       <height>51</height>
      </rect>
@@ -472,8 +472,8 @@
    <widget class="QPushButton" name="pushButton_5">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>420</y>
+      <x>190</x>
+      <y>350</y>
       <width>321</width>
       <height>51</height>
      </rect>
@@ -493,6 +493,28 @@
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="QTextBrowser" name="textBrowser_2">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>350</y>
+      <width>411</width>
+      <height>261</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>DejaVu Sans Mono</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QTextBrowser {padding-left: 30px;}</string>
     </property>
    </widget>
   </widget>
