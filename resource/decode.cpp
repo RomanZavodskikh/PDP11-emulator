@@ -186,8 +186,8 @@ bool cmp(Vcpu *vcpu, opcode_t opcode, args_t args)
     vcpu -> n = res & (1 << 16);
     vcpu -> z = (res == 0);
     vcpu -> c = ((res & (1 << 16)) != 0);
-
-    //TODO: V bits are not checks
+    vcpu -> v = ((*args.arg1 & (1 << 15)) != (*args.arg2 & (1 << 15))) &&
+                ((*args.arg2 & (1 << 15)) == (       res & (1 << 15)));
     
     return true;
 }
@@ -199,8 +199,8 @@ bool cmpb(Vcpu *vcpu, opcode_t opcode, args_t args)
     vcpu -> n = res & (1 << 8);
     vcpu -> z = (res == 0);
     vcpu -> c = ((res & (1 << 8)) != 0);
-
-    //TODO: V bits are not checks
+    vcpu -> v = ((*args.arg1 & (1 << 7)) != (*args.arg2 & (1 << 7))) &&
+                ((*args.arg2 & (1 << 7)) == (       res & (1 << 7)));
     
     return true;
 }
@@ -281,8 +281,10 @@ bool add(Vcpu *vcpu, opcode_t opcode, args_t args)
     *args.arg2 = res;
     
     vcpu -> c = ((res & (1 << 16)) != 0);
-
-    //TODO: N Z V bits are not checks
+    vcpu -> n = ((res & (1 << 15)) != 0);
+    vcpu -> z = (res == 0);
+    vcpu -> v = ((*args.arg1 & (1 << 15)) == (*args.arg2 & (1 << 15))) &&
+                ((*args.arg1 & (1 << 15)) != (       res & (1 << 15)));
 
     return true;
 }
@@ -293,8 +295,10 @@ bool sub(Vcpu *vcpu, opcode_t opcode, args_t args)
     *args.arg2 = res;
 
     vcpu -> c = ((res & (1 << 16)) != 0);
-
-    //TODO: N Z V bits are not checks
+    vcpu -> n = ((res & (1 << 15)) != 0);
+    vcpu -> z = (res == 0);
+    vcpu -> v = ((*args.arg1 & (1 << 15)) != (*args.arg2 & (1 << 15))) &&
+                ((*args.arg1 & (1 << 15)) == (       res & (1 << 15)));
 
     return true;
 }
@@ -313,8 +317,8 @@ bool mul(Vcpu *vcpu, opcode_t opcode, args_t args)
     vcpu -> n = res & (1 << 15);
     vcpu -> z = (res == 0);
     vcpu -> v = false;
-
-    //TODO: C flag is not changed yet
+    vcpu -> c = ((res & 0xFFFF0000 !=          0) && (res & (1 << 31) ==        0 )) ||
+                ((res & 0xFFFF0000 != 0xFFFF0000) && (res & (1 << 31) == (1 << 31)));
 
     return true;
 }
