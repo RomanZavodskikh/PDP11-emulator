@@ -190,6 +190,11 @@ bool Emulator::showState()
     QImage videoState(vcpu_->getFrameBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT, QImage::Format_Indexed8);
     ui->screen->setPixmap(QPixmap::fromImage(videoState).scaled(WINDOW_WIDTH, WINDOW_HEIGHT));
 
+    ui->lineEdit_10->setText(QString::number(vcpu_->getFlag(0)));
+    ui->lineEdit_11->setText(QString::number(vcpu_->getFlag(1)));
+    ui->lineEdit_12->setText(QString::number(vcpu_->getFlag(2)));
+    ui->lineEdit_13->setText(QString::number(vcpu_->getFlag(3)));
+
     QString memDump("");
     vcpu_->getMemString(memDump);
     ui->textBrowser->setText(memDump);

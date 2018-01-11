@@ -24,6 +24,7 @@ class Vcpu
         bool        getMemString(QString& str, uint16_t address = 0);
         bool        getDisasmString(QString& str, uint16_t address = 0);
         bool        reset();
+        bool        getFlag(uint16_t flagNum);
 
         uchar* getFrameBuffer();
 

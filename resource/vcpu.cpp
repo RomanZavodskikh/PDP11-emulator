@@ -122,3 +122,17 @@ uchar* Vcpu::getFrameBuffer()
 {
     return frameBuffer_;
 }
+
+bool Vcpu::getFlag(uint16_t flagNum)
+{
+    switch (flagNum)
+    {
+        case 0: return n;
+        case 1: return z;
+        case 2: return v;
+        case 3: return c;
+        default: return false;
+    }
+
+    return false;
+}
