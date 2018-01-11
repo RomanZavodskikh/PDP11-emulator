@@ -115,6 +115,7 @@ bool Vcpu::reset()
     {
         *(getRegAddr(i)) = 0;
     }
+    n = z = v = c = 0;
     return true;
 }
 
