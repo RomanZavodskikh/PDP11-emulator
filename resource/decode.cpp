@@ -23,6 +23,38 @@ decode_op_t decode_table[] =
     { 0xfe00,  0x7600, ashc,            "ashc"},
     { 0xfe00,  0x7800, xor_instr,       "xor"},
     { 0xfe00,  0x7e00, sob,             "sob"},
+    { 0xffc0,  0x00c0, swab,            "swab"},
+    { 0xffc0,  0x0a00, clr,             "clr"},
+    { 0xffc0,  0x8a00, clrb,            "clrb"},
+    { 0xffc0,  0x0a40, com,             "com"},
+    { 0xffc0,  0x8a40, comb,            "comb"},
+    { 0xffc0,  0x0a80, inc,             "inc"},
+    { 0xffc0,  0x8a80, incb,            "incb"},
+    { 0xffc0,  0x0ac0, dec,             "dec"},
+    { 0xffc0,  0x8ac0, decb,            "decb"},
+    { 0xffc0,  0x0b00, neg,             "neg"},
+    { 0xffc0,  0x8b00, negb,            "negb"},
+    { 0xffc0,  0x0b40, adc,             "adc"},
+    { 0xffc0,  0x8b40, adcb,            "adcb"},
+    { 0xffc0,  0x0b80, sbc,             "sbc"},
+    { 0xffc0,  0x8b80, sbcb,            "sbcb"},
+    { 0xffc0,  0x0bc0, tst,             "tst"},
+    { 0xffc0,  0x8bc0, tstb,            "tstb"},
+    { 0xffc0,  0x0c00, ror,             "ror"},
+    { 0xffc0,  0x8c00, rorb,            "rorb"},
+    { 0xffc0,  0x0c40, rol,             "rol"},
+    { 0xffc0,  0x8c40, rolb,            "rolb"},
+    { 0xffc0,  0x0c80, asr,             "asr"},
+    { 0xffc0,  0x8c80, asrb,            "asrb"},
+    { 0xffc0,  0x0cc0, asl,             "asl"},
+    { 0xffc0,  0x0d00, mark,            "mark"},
+    { 0xffc0,  0x8d00, mtps,            "mtps"},
+    { 0xffc0,  0x0d40, mfpi,            "mfpi"},
+    { 0xffc0,  0x8d40, mfpd,            "mfpd"},
+    { 0xffc0,  0x0d80, mtpi,            "mtpi"},
+    { 0xffc0,  0x8d80, mtpd,            "mtpd"},
+    { 0xffc0,  0x0dc0, sxt,             "sxt"},
+    { 0xffc0,  0x8dc0, mfps,            "mfps"},
     { NULL,    NULL,   nullptr,         "none"}
 };
 
@@ -417,5 +449,165 @@ bool sob(Vcpu *vcpu, opcode_t opcode, args_t args)
     (*vcpu->getRegAddr(7)) -= 2 * *args.arg2;
     (*vcpu->getRegAddr(7)) -= 2; //to compensate PC += 2 in the end of emulation step
 
+    return true;
+}
+
+bool swab(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool clr(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool clrb(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool com(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool comb(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool inc(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool incb(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool dec(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool decb(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool neg(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool negb(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool adc(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool adcb(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool sbc(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool sbcb(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool tst(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool tstb(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool ror(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool rorb(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool rol(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool rolb(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool asr(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool asrb(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool asl(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool mark(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool mtps(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool mfpi(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool mfpd(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool mtpi(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool mtpd(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool sxt(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    return true;
+}
+
+bool mfps(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
     return true;
 }
