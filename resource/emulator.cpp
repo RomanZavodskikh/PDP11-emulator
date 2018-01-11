@@ -56,7 +56,7 @@ bool Emulator::tryToEmulate()
         fillArguments(&args, &args_prototype);
 
         decoder_.decodeAndExecute(vcpu_, opcode_t{ instr }, args);
-        for (size_t i = 0; i < 1000; i++)
+        for (size_t i = 0; i < 100; i++)
         {
             QThread::msleep(1);
             QCoreApplication::processEvents();
@@ -107,6 +107,8 @@ args_t Emulator::fillArguments(args_t* args, args_prototype_t* args_prototype)
         }
         case DOUBLE_OPERAND_REG:
         {
+            args->arg1 = getArgViaMode(args_prototype->arg1, 0);
+            args->arg2 = getArgViaMode(args_prototype->arg2, args_prototype->mode2);
             break;
         }
         case DOUBLE_OPERAND:

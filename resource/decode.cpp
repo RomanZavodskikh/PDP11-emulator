@@ -49,7 +49,7 @@ void Decoder::defineArguments(args_prototype_t* args, uint16_t instr)
         args->instrType = CONDITIONAL;
         args->arg1 = (instr & 0x00FF);
     }
-    else if ((instr & 0xF000) == 7000)
+    else if ((instr & 0xF000) == 0x7000)
     {
         args->instrType = DOUBLE_OPERAND_REG;
         args->arg1 = (instr & 0x00E0) >> 6;
@@ -325,26 +325,97 @@ bool mul(Vcpu *vcpu, opcode_t opcode, args_t args)
 
 bool div(Vcpu *vcpu, opcode_t opcode, args_t args) 
 {
+    vcpu -> c = (*args.arg2 == 0);
+    if (*args.arg2 == 0)
+    {
+        vcpu -> v = true;
+        return false;
+    }
+
+    uint32_t dividend = (*args.arg1 << 16) + *(args.arg1 + 1);
+    uint16_t quotient = dividend / *args.arg2;
+    uint32_t big_quotient = dividend / *args.arg2;
+    uint16_t remainder = dividend - quotient * *args.arg2;
+    if (big_quotient > (uint32_t)(quotient & 0x7FFF)) // quotient exceed 15 bits
+    {
+        vcpu -> v = true;
+        return false;
+    }
+
+    *args.arg1 = quotient;
+    *(args.arg1 + 1) = remainder;
+
+    vcpu -> n = (quotient < 0);
+    vcpu -> z = (quotient == 0);
     return true;
 }
 
 bool ash(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    int16_t shift = (int16_t)*args.arg2;
+    if (shift > 32 || shift < -31)
+        return false;
+
+    uint32_t result = (shift > 0) ? *args.arg1 << shift :
+                                    (int32_t)*args.arg1 >> -shift;
+
+    vcpu -> n = (result & (1 << 15) != 0);
+    vcpu -> z = (result == 0);
+    vcpu -> v = (result & (1 << 15) != *args.arg1 & (1 << 15));
+    if (shift > 0)
+    { //left
+        vcpu -> c = (*args.arg1 << (shift - 1)) & (1 << 15);
+    }
+    else
+    { //rigth
+        vcpu -> c = ((int32_t)*args.arg1 >> (-shift + 1)) & 0x1;
+    }
     return true;
 }
 
 bool ashc(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    int16_t shift = (int16_t)*args.arg2;
+    uint32_t word = (*args.arg1 << 16) + *(args.arg1 + 1);
+    if (shift > 32 || shift < -31)
+        return false;
+
+    uint32_t result = (shift > 0) ? word << shift :
+                                    (int32_t)word >> -shift;
+
+    vcpu -> n = (result & (1 << 15) != 0);
+    vcpu -> z = (result == 0);
+    vcpu -> v = (result & (1 << 15) != word & (1 << 31));
+    if (shift > 0)
+    { //left
+        vcpu -> c = (word << (shift - 1)) & (1 << 31);
+    }
+    else
+    { //rigth
+        vcpu -> c = ((int32_t)word >> (-shift + 1)) & 0x1;
+    }
+
+    *args.arg1       = (uint16_t)result >> 16;
+    *(args.arg1 + 1) = (uint16_t)result;
     return true;
 }
 
 bool xor_instr(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
     *args.arg2 ^= *args.arg1;
+
+    vcpu -> n = (*args.arg2 & (1 << 15) != 0);
+    vcpu -> z = (*args.arg2 == 0);
+    vcpu -> v = false;
+
     return true;
 }
 
 bool sob(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    (*args.arg1)--;
+    (*vcpu->getRegAddr(7)) -= 2 * *args.arg2;
+    (*vcpu->getRegAddr(7)) -= 2; //to compensate PC += 2 in the end of emulation step
+
     return true;
 }
