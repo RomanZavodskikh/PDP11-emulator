@@ -47,6 +47,7 @@ decode_op_t decode_table[] =
     { 0xffc0,  0x0c80, asr,             "asr"},
     { 0xffc0,  0x8c80, asrb,            "asrb"},
     { 0xffc0,  0x0cc0, asl,             "asl"},
+    { 0xffc0,  0x8cc0, aslb,            "aslb"},
     { 0xffc0,  0x0d00, mark,            "mark"},
     { 0xffc0,  0x8d00, mtps,            "mtps"},
     { 0xffc0,  0x0d40, mfpi,            "mfpi"},
@@ -70,7 +71,7 @@ Decoder::~Decoder()
 
 void Decoder::defineArguments(args_prototype_t* args, uint16_t instr)
 {
-    if ((instr & 0x7800) == 0x0800)
+    if ((instr & 0x7800) == 0x0800 || (instr & 0xffc0) == 0x00c0 /*swab*/)
     {
         args->instrType = SINGLE_OPERAND;
         args->mode1 = (instr & 0x0038) >> 3;
@@ -349,8 +350,8 @@ bool mul(Vcpu *vcpu, opcode_t opcode, args_t args)
     vcpu -> n = res & (1 << 15);
     vcpu -> z = (res == 0);
     vcpu -> v = false;
-    vcpu -> c = ((res & 0xFFFF0000 !=          0) && (res & (1 << 31) ==        0 )) ||
-                ((res & 0xFFFF0000 != 0xFFFF0000) && (res & (1 << 31) == (1 << 31)));
+    vcpu -> c = (((res & 0xFFFF0000) !=          0) && ((res & (1U << 31)) ==         0 )) ||
+                (((res & 0xFFFF0000) != 0xFFFF0000) && ((res & (1U << 31)) == (1U << 31)));
 
     return true;
 }
@@ -377,7 +378,7 @@ bool div(Vcpu *vcpu, opcode_t opcode, args_t args)
     *args.arg1 = quotient;
     *(args.arg1 + 1) = remainder;
 
-    vcpu -> n = (quotient < 0);
+    vcpu -> n = ((quotient & (1 << 15)) != 0);
     vcpu -> z = (quotient == 0);
     return true;
 }
@@ -391,9 +392,9 @@ bool ash(Vcpu *vcpu, opcode_t opcode, args_t args)
     uint32_t result = (shift > 0) ? *args.arg1 << shift :
                                     (int32_t)*args.arg1 >> -shift;
 
-    vcpu -> n = (result & (1 << 15) != 0);
+    vcpu -> n = ((result & (1 << 15)) != 0);
     vcpu -> z = (result == 0);
-    vcpu -> v = (result & (1 << 15) != *args.arg1 & (1 << 15));
+    vcpu -> v = ((result & (1 << 15)) != (*args.arg1 & (1 << 15)));
     if (shift > 0)
     { //left
         vcpu -> c = (*args.arg1 << (shift - 1)) & (1 << 15);
@@ -415,9 +416,9 @@ bool ashc(Vcpu *vcpu, opcode_t opcode, args_t args)
     uint32_t result = (shift > 0) ? word << shift :
                                     (int32_t)word >> -shift;
 
-    vcpu -> n = (result & (1 << 15) != 0);
+    vcpu -> n = ((result & (1 << 15)) != 0);
     vcpu -> z = (result == 0);
-    vcpu -> v = (result & (1 << 15) != word & (1 << 31));
+    vcpu -> v = ((result & (1 << 15)) != (word & (1 << 31)));
     if (shift > 0)
     { //left
         vcpu -> c = (word << (shift - 1)) & (1 << 31);
@@ -436,7 +437,7 @@ bool xor_instr(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
     *args.arg2 ^= *args.arg1;
 
-    vcpu -> n = (*args.arg2 & (1 << 15) != 0);
+    vcpu -> n = ((*args.arg2 & (1 << 15)) != 0);
     vcpu -> z = (*args.arg2 == 0);
     vcpu -> v = false;
 
@@ -454,121 +455,287 @@ bool sob(Vcpu *vcpu, opcode_t opcode, args_t args)
 
 bool swab(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    uint8_t lo = (*args.arg1 & 0xFF);
+    uint8_t hi = (*args.arg1 >> 8);
+
+    *args.arg1 = (lo << 8) + hi;
+
+    vcpu -> n = ((*args.arg1 & (1 << 7)) != 0);
+    vcpu -> z = (hi == 0);
+    vcpu -> v = false;
+    vcpu -> c = false;
     return true;
 }
 
 bool clr(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    *args.arg1 = 0;
+
+    vcpu -> n = false;
+    vcpu -> z = true;
+    vcpu -> v = false;
+    vcpu -> c = false;
     return true;
 }
 
 bool clrb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    *args.arg1 &= 0xFF00;
+
+    vcpu -> n = false;
+    vcpu -> z = true;
+    vcpu -> v = false;
+    vcpu -> c = false;
     return true;
 }
 
 bool com(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    *args.arg1 = ~(*args.arg1);
+
+    vcpu -> n = ((*args.arg1 & (1 << 15)) != 0);
+    vcpu -> z = (*args.arg1 == 0);
+    vcpu -> v = false;
+    vcpu -> c = true;
     return true;
 }
 
 bool comb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    *((uint8_t*)args.arg1 + 1) = ~(*((uint8_t*)args.arg1 + 1));
+
+    vcpu -> n = ((*args.arg1 & (1 << 15)) != 0);
+    vcpu -> z = (*args.arg1 == 0);
+    vcpu -> v = false;
+    vcpu -> c = true;
     return true;
 }
 
 bool inc(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    (*args.arg1)++;
+
+    vcpu -> n = ((*args.arg1 & (1 << 15)) != 0);
+    vcpu -> z = (*args.arg1 == 0);
+    vcpu -> v = (*args.arg1 - 1 == 0x7fff);
     return true;
 }
 
 bool incb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    (*(uint8_t*)args.arg1)++;
+
+    vcpu -> n = (((*(uint8_t*)args.arg1) & (1 << 7)) != 0);
+    vcpu -> z = ((*(uint8_t*)args.arg1) == 0);
+    vcpu -> v = ((*(uint8_t*)args.arg1) - 1 == 0x7f);
     return true;
 }
 
 bool dec(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    (*args.arg1)--;
+
+    vcpu -> n = ((*args.arg1 & (1 << 15)) != 0);
+    vcpu -> z = (*args.arg1 == 0);
+    vcpu -> v = (*args.arg1 + 1 == 0x8000);
     return true;
 }
 
 bool decb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    (*(uint8_t*)args.arg1)--;
+
+    vcpu -> n = (((*(uint8_t*)args.arg1) & (1 << 7)) != 0);
+    vcpu -> z = ((*(uint8_t*)args.arg1) == 0);
+    vcpu -> v = ((*(uint8_t*)args.arg1) + 1 == 0x80);
     return true;
 }
 
 bool neg(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    *args.arg1 = -*args.arg1;
+
+    vcpu -> n = ((*args.arg1 & (1 << 15)) != 0);
+    vcpu -> z = (*args.arg1 == 0);
+    vcpu -> v = (*args.arg1 == 0x8000);
+    vcpu -> c = (*args.arg1 != 0);
     return true;
 }
 
 bool negb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    *(uint8_t*)args.arg1 = -*(uint8_t*)args.arg1;
+
+    vcpu -> n = ((*args.arg1 & (1 << 7)) != 0);
+    vcpu -> z = (*args.arg1 == 0);
+    vcpu -> v = (*args.arg1 == 0x80);
+    vcpu -> c = (*args.arg1 != 0);
     return true;
 }
 
 bool adc(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    uint16_t old = *args.arg1;
+    *args.arg1 += vcpu -> c;
+
+    vcpu -> n = ((*args.arg1 & (1 << 15)) != 0);
+    vcpu -> z = (*args.arg1 == 0);
+    vcpu -> v = (old == 0x7fff) && vcpu -> c;
+    vcpu -> c = (old == 0xffff) && vcpu -> c;
     return true;
 }
 
 bool adcb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    uint8_t* p = (uint8_t*)args.arg1;
+    uint8_t old = *p;
+    *p += vcpu -> c;
+
+    vcpu -> n = ((*p & (1 << 7)) != 0);
+    vcpu -> z = (*p == 0);
+    vcpu -> v = (old == 0x7f) && vcpu -> c;
+    vcpu -> c = (old == 0xff) && vcpu -> c;
     return true;
 }
 
 bool sbc(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    uint16_t old = *args.arg1;
+    *args.arg1 -= vcpu -> c;
+
+    vcpu -> n = ((*args.arg1 & (1 << 15)) != 0);
+    vcpu -> z = (*args.arg1 == 0);
+    vcpu -> v = (old == 0x8000);
+    vcpu -> c = !((old == 0x0000) && vcpu -> c);
     return true;
 }
 
 bool sbcb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    uint8_t* p = (uint8_t*)args.arg1;
+    uint8_t old = *p;
+    *p -= vcpu -> c;
+
+    vcpu -> n = ((*p & (1 << 7)) != 0);
+    vcpu -> z = (*p == 0);
+    vcpu -> v = (old == 0x80);
+    vcpu -> c = !((old == 0xff) && vcpu -> c);
     return true;
 }
 
 bool tst(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    vcpu -> n = ((*args.arg1 & (1 << 15)) != 0);
+    vcpu -> z = (*args.arg1 == 0);
+    vcpu -> v = false;
+    vcpu -> c = false;
     return true;
 }
 
 bool tstb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    uint8_t* p = (uint8_t*)args.arg1;
+
+    vcpu -> n = ((*p & (1 << 7)) != 0);
+    vcpu -> z = (*p == 0);
+    vcpu -> v = false;
+    vcpu -> c = false;
     return true;
 }
 
 bool ror(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    vcpu -> c = ((*args.arg1 & 0x1) != 0);
+    *args.arg1 >>= 1;
+    *args.arg1 |= ((uint16_t)vcpu->c << 15);
+
+    vcpu -> n = ((*args.arg1 & (1 << 15)) != 0);
+    vcpu -> z = (*args.arg1 == 0);
+    vcpu -> v = vcpu -> n ^ vcpu -> c;
     return true;
 }
 
 bool rorb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    uint8_t* p = (uint8_t*)args.arg1;
+    vcpu -> c = ((*p & 0x1) != 0);
+    *p >>= 1;
+    *p |= ((uint8_t)vcpu->c << 7);
+
+    vcpu -> n = ((*p & (1 << 7)) != 0);
+    vcpu -> z = (*p == 0);
+    vcpu -> v = vcpu -> n ^ vcpu -> c;
     return true;
 }
 
 bool rol(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    vcpu -> c = ((*args.arg1 & (1 << 15)) != 0);
+    *args.arg1 <<= 1;
+    *args.arg1 |= vcpu -> c;
+
+    vcpu -> n = ((*args.arg1 & (1 << 15)) != 0);
+    vcpu -> z = (*args.arg1 == 0);
+    vcpu -> v = vcpu -> n ^ vcpu -> c;
     return true;
 }
 
 bool rolb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    uint8_t* p = (uint8_t*)args.arg1;
+    vcpu -> c = ((*p & (1 << 7)) != 0);
+    *p <<= 1;
+    *p |= vcpu -> c;
+
+    vcpu -> n = ((*p & (1 << 15)) != 0);
+    vcpu -> z = (*p == 0);
+    vcpu -> v = vcpu -> n ^ vcpu -> c;
     return true;
 }
 
 bool asr(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    vcpu -> c = *args.arg1 & 0x1;
+
+    *(int16_t*)args.arg1 >>= 1;
+    vcpu -> n = ((*args.arg1 & (1 << 15)) != 0);
+    vcpu -> z = (*args.arg1 == 0);
+    vcpu -> v = vcpu -> n ^ vcpu -> c;
     return true;
 }
 
 bool asrb(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    uint8_t* p = (uint8_t*)args.arg1;
+    vcpu -> c = *p & 0x1;
+
+    *(int8_t*)p >>= 1;
+    vcpu -> n = ((*args.arg1 & (1 << 7)) != 0);
+    vcpu -> z = (*args.arg1 == 0);
+    vcpu -> v = vcpu -> n ^ vcpu -> c;
     return true;
 }
 
 bool asl(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    vcpu -> c = ((*args.arg1 & (1 << 15)) != 0);
+
+    *args.arg1 <<= 1;
+    vcpu -> n = ((*args.arg1 & (1 << 15)) != 0);
+    vcpu -> z = (*args.arg1 == 0);
+    vcpu -> v = vcpu -> n ^ vcpu -> c;
+    return true;
+}
+
+bool aslb(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    uint8_t* p = (uint8_t*)args.arg1;
+    vcpu -> c = ((*p & (1 << 7)) != 0);
+
+    *args.arg1 <<= 1;
+    vcpu -> n = ((*p & (1 << 7)) != 0);
+    vcpu -> z = (*p == 0);
+    vcpu -> v = vcpu -> n ^ vcpu -> c;
     return true;
 }
 
@@ -604,6 +771,9 @@ bool mtpd(Vcpu *vcpu, opcode_t opcode, args_t args)
 
 bool sxt(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    *args.arg1 = vcpu -> n ? 0xffff : 0x0;
+    if (vcpu->n == false)
+        vcpu->z = true;
     return true;
 }
 
