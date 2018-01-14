@@ -6,6 +6,7 @@
 #include <qstring.h>
 #include <qthread.h>
 #include "ui_mainwindow.h"
+#include "screen.h"
 
 Emulator ::Emulator():emulating_(false)
 {
@@ -182,6 +183,9 @@ bool Emulator::showState()
     ui->lineEdit_7->setText(QString::number(vcpu_->getRegValue(5)));
     ui->lineEdit_8->setText(QString::number(vcpu_->getRegValue(6)));
     ui->lineEdit_9->setText(QString::number(vcpu_->getRegValue(7)));
+
+    QImage videoState(vcpu_->getFrameBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT, QImage::Format_Indexed8);
+    ui->screen->setPixmap(QPixmap::fromImage(videoState));
 
     QString memDump("");
     vcpu_->getMemString(memDump);

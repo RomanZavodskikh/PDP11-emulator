@@ -1,6 +1,7 @@
 #pragma once
 
 #include "qstring.h"
+#include "screen.h"
 
 const int MEM_SIZE = 32 * 1024;
 const int REG_AMOUNT = 8;
@@ -22,6 +23,8 @@ class Vcpu
         bool        getMemString(QString& str, uint16_t address = 0);
         bool        reset();
 
+        uchar* getFrameBuffer();
+
     private:
         uint16_t* reg0_;
         uint16_t* reg1_;
@@ -31,6 +34,8 @@ class Vcpu
         uint16_t* reg5_;
         uint16_t* reg6_;
         uint16_t* reg7_;
+
+        uchar frameBuffer_[SCREEN_WIDTH * SCREEN_HEIGHT * 3];
 
         uint16_t memory_[MEM_SIZE + REG_AMOUNT];
 };

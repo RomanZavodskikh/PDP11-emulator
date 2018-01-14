@@ -63,7 +63,7 @@
      <rect>
       <x>30</x>
       <y>10</y>
-      <width>551</width>
+      <width>531</width>
       <height>321</height>
      </rect>
     </property>
@@ -482,6 +482,19 @@
      <string>Reset</string>
     </property>
    </widget>
+   <widget class="QLabel" name="screen">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>10</y>
+      <width>531</width>
+      <height>321</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -489,7 +502,7 @@
      <x>0</x>
      <y>0</y>
      <width>1036</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

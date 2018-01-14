@@ -11,6 +11,12 @@ Vcpu::Vcpu() : n(false), z(false), v(false), c(false)
     reg5_ = &memory_[MEM_SIZE + 5];
     reg6_ = &memory_[MEM_SIZE + 6];
     reg7_ = &memory_[MEM_SIZE + 7];
+
+    //Shows that video buffer works fine;
+    for (int i = 0; i < 80000; i++)
+    {
+        frameBuffer_[i] = 120;
+    }
 }
 
 Vcpu::~Vcpu()
@@ -103,4 +109,9 @@ bool Vcpu::reset()
         *(getRegAddr(i)) = 0;
     }
     return true;
+}
+
+uchar* Vcpu::getFrameBuffer()
+{
+    return frameBuffer_;
 }
