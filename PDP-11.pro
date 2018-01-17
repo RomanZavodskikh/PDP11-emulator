@@ -18,12 +18,14 @@ SOURCES += main.cpp\
     resource/decode.cpp \
     resource/emulator.cpp \
     resource/vcpu.cpp \
-    resource/screen.cpp
+    resource/screen.cpp \
+    resource/keyboard.cpp
 
 HEADERS  += mainwindow.h \
     resource/decode.h \
     resource/emulator.h \
     resource/vcpu.h \
-    resource/screen.h
+    resource/screen.h \
+    resource/keyboard.h
 
 FORMS    += mainwindow.ui

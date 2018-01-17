@@ -13,10 +13,10 @@ Vcpu::Vcpu() : n(false), z(false), v(false), c(false)
     reg7_ = &memory_[MEM_SIZE + 7];
 
     //Shows that video buffer works fine;
-    for (int i = 0; i < 80000; i++)
-    {
-        frameBuffer_[i] = 120;
-    }
+    keyboard.stringToVRAM(frameBuffer_, 50, 50, "OSTOROZHNA!");
+    keyboard.stringToVRAM(frameBuffer_, 50, 80, "ETO APASNIY");
+    keyboard.stringToVRAM(frameBuffer_, 50, 110, "EMULATOR!!!");
+
 }
 
 Vcpu::~Vcpu()

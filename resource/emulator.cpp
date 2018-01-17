@@ -8,6 +8,9 @@
 #include "ui_mainwindow.h"
 #include "screen.h"
 
+const int WINDOW_WIDTH = 531;
+const int WINDOW_HEIGHT = 321;
+
 Emulator ::Emulator():emulating_(false)
 {
     vcpu_ = new Vcpu();
@@ -185,7 +188,7 @@ bool Emulator::showState()
     ui->lineEdit_9->setText(QString::number(vcpu_->getRegValue(7)));
 
     QImage videoState(vcpu_->getFrameBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT, QImage::Format_Indexed8);
-    ui->screen->setPixmap(QPixmap::fromImage(videoState));
+    ui->screen->setPixmap(QPixmap::fromImage(videoState).scaled(WINDOW_WIDTH, WINDOW_HEIGHT));
 
     QString memDump("");
     vcpu_->getMemString(memDump);
