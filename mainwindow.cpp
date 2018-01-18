@@ -17,6 +17,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lineEdit_7->setValidator(new QIntValidator(0, 65535));
     ui->lineEdit_8->setValidator(new QIntValidator(0, 65535));
     ui->lineEdit_9->setValidator(new QIntValidator(0, 65535));
+    ui->lineEdit_10->setValidator(new QIntValidator(0, 1));
+    ui->lineEdit_11->setValidator(new QIntValidator(0, 1));
+    ui->lineEdit_12->setValidator(new QIntValidator(0, 1));
+    ui->lineEdit_13->setValidator(new QIntValidator(0, 1));
     emulator_.setUi(ui);
     emulator_.showState();
 }

@@ -97,9 +97,16 @@ bool Vcpu::getMemString(QString& str, uint16_t address)
         uint8_t lo = word & 0xFF;
         uint8_t hi = word >> 8;
         str += QString("%1").arg(lo, 2, 16, QChar('0')) + " " + QString("%1").arg(hi, 2, 16, QChar('0'));
+        if (i*2 == this->getRegValue(7))
+            str += " <<<";
         str += "\n";
     }
     return true;
+}
+
+bool Vcpu::getDisasmString(QString& str, uint16_t address)
+{
+    return getMemString(str, address);
 }
 
 bool Vcpu::reset()
@@ -108,10 +115,25 @@ bool Vcpu::reset()
     {
         *(getRegAddr(i)) = 0;
     }
+    n = z = v = c = 0;
     return true;
 }
 
 uchar* Vcpu::getFrameBuffer()
 {
     return frameBuffer_;
+}
+
+bool Vcpu::getFlag(uint16_t flagNum)
+{
+    switch (flagNum)
+    {
+        case 0: return n;
+        case 1: return z;
+        case 2: return v;
+        case 3: return c;
+        default: return false;
+    }
+
+    return false;
 }

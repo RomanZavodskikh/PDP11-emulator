@@ -53,10 +53,10 @@ bool Emulator::tryToEmulate()
         uint16_t instr = getVcpu()->getMemValue(currentPointer);
 
         decoder_.defineArguments(&args_prototype, instr);
-        fillArguments(&args, &args_prototype, &currentPointer);
+        fillArguments(&args, &args_prototype);
 
         decoder_.decodeAndExecute(vcpu_, opcode_t{ instr }, args);
-        for (size_t i = 0; i < 1000; i++)
+        for (size_t i = 0; i < 100; i++)
         {
             QThread::msleep(1);
             QCoreApplication::processEvents();
@@ -83,7 +83,7 @@ bool Emulator::step()
     uint16_t instr = getVcpu()->getMemValue(currentPointer);
 
     decoder_.defineArguments(&args_prototype, instr);
-    fillArguments(&args, &args_prototype, &currentPointer);
+    fillArguments(&args, &args_prototype);
 
     decoder_.decodeAndExecute(vcpu_, opcode_t{ instr }, args);
     *getVcpu()->getRegAddr(7) += 2;
@@ -92,13 +92,13 @@ bool Emulator::step()
     QCoreApplication::processEvents();
 }
 
-args_t Emulator::fillArguments(args_t* args, args_prototype_t* args_prototype, int* currentPointer)
+args_t Emulator::fillArguments(args_t* args, args_prototype_t* args_prototype)
 {
     switch (args_prototype->instrType)
     {
         case SINGLE_OPERAND:
         {
-            args->arg1 = getArgViaMode(args_prototype->arg1, args_prototype->mode1, currentPointer);
+            args->arg1 = getArgViaMode(args_prototype->arg1, args_prototype->mode1);
             break;
         }
         case CONDITIONAL:
@@ -107,18 +107,20 @@ args_t Emulator::fillArguments(args_t* args, args_prototype_t* args_prototype, i
         }
         case DOUBLE_OPERAND_REG:
         {
+            args->arg1 = getArgViaMode(args_prototype->arg1, 0);
+            args->arg2 = getArgViaMode(args_prototype->arg2, args_prototype->mode2);
             break;
         }
         case DOUBLE_OPERAND:
         {
-            args->arg1 = getArgViaMode(args_prototype->arg1, args_prototype->mode1, currentPointer);
-            args->arg2 = getArgViaMode(args_prototype->arg2, args_prototype->mode2, currentPointer);
+            args->arg1 = getArgViaMode(args_prototype->arg1, args_prototype->mode1);
+            args->arg2 = getArgViaMode(args_prototype->arg2, args_prototype->mode2);
             break;
         }
     }
 }
 
-uint16_t* Emulator::getArgViaMode(uint16_t arg, uint16_t mode, int* currentPointer)
+uint16_t* Emulator::getArgViaMode(uint16_t arg, uint16_t mode)
 {
     switch (mode)
     {
@@ -190,10 +192,39 @@ bool Emulator::showState()
     QImage videoState(vcpu_->getFrameBuffer(), SCREEN_WIDTH, SCREEN_HEIGHT, QImage::Format_Indexed8);
     ui->screen->setPixmap(QPixmap::fromImage(videoState).scaled(WINDOW_WIDTH, WINDOW_HEIGHT));
 
+    ui->lineEdit_10->setText(QString::number(vcpu_->getFlag(0)));
+    ui->lineEdit_11->setText(QString::number(vcpu_->getFlag(1)));
+    ui->lineEdit_12->setText(QString::number(vcpu_->getFlag(2)));
+    ui->lineEdit_13->setText(QString::number(vcpu_->getFlag(3)));
+
     QString memDump("");
     vcpu_->getMemString(memDump);
     ui->textBrowser->setText(memDump);
+
+    QString disasmDump("");
+    getDisasmDump(disasmDump);
+    ui->textBrowser_2->setText(disasmDump);
     qApp->processEvents();
+    return true;
+}
+
+bool Emulator::getDisasmDump(QString &out_str)
+{
+    for (uint16_t currentPointer = 0; currentPointer < MEM_SIZE; currentPointer++)
+    {
+        args_prototype_t args_prototype;
+        args_t args;
+        uint16_t instr = vcpu_->getMemValue(currentPointer);
+        QString disasmDelta("");
+
+        decoder_.defineArguments(&args_prototype, instr);
+        decoder_.decodeAndDisasm(vcpu_, opcode_t{ instr }, args_prototype, disasmDelta);
+        disasmDelta = "0x" + QString("%1").arg(2*(currentPointer), 4, 16, QChar('0')) + ": " + disasmDelta;
+        if (2*currentPointer == getVcpu()->getRegValue(7))
+            disasmDelta += " <<<";
+        out_str += disasmDelta + "\n";
+    }
+
     return true;
 }
 
