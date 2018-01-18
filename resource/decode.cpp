@@ -56,6 +56,21 @@ decode_op_t decode_table[] =
     { 0xffc0,  0x8d80, mtpd,            "mtpd"},
     { 0xffc0,  0x0dc0, sxt,             "sxt"},
     { 0xffc0,  0x8dc0, mfps,            "mfps"},
+    { 0xff00,  0x0100, br,              "br"},
+    { 0xff00,  0x0200, bne,             "bne"},
+    { 0xff00,  0x0300, beq,             "beq"},
+    { 0xff00,  0x0400, bge,             "bge"},
+    { 0xff00,  0x0500, blt,             "blt"},
+    { 0xff00,  0x0600, bgt,             "bgt"},
+    { 0xff00,  0x0700, ble,             "ble"},
+    { 0xff00,  0x8000, bpl,             "bpl"},
+    { 0xff00,  0x8100, bmi,             "bmi"},
+    { 0xff00,  0x8200, bhi,             "bhi"},
+    { 0xff00,  0x8300, blos,            "blos"},
+    { 0xff00,  0x8400, bvc,             "bvc"},
+    { 0xff00,  0x8500, bvs,             "bvs"},
+    { 0xff00,  0x8600, bcc,             "bcc"},
+    { 0xff00,  0x8700, bcs,             "bcs"},
     { NULL,    NULL,   nullptr,         "none"}
 };
 
@@ -176,11 +191,26 @@ bool Decoder::decodeAndDisasm(Vcpu* vcpu, opcode_t opcode, args_prototype_t args
     {
         if ((decode_table[i].mask & opcode.value) == decode_table[i].value)
         {
-            ret_str = QString(decode_table[i].op_name.c_str());
-            appendOperand(ret_str, args_prototype, 1);
-            ret_str += ",";
-            appendOperand(ret_str, args_prototype, 2);
-            break;
+            if (args_prototype.instrType == CONDITIONAL)
+            {
+                ret_str = QString(decode_table[i].op_name.c_str());
+                ret_str += " " + QString::number((int8_t)args_prototype.arg1);
+                break;
+            }
+            else if (args_prototype.instrType == DOUBLE_OPERAND ||
+                     args_prototype.instrType == DOUBLE_OPERAND_REG)
+            {
+                ret_str = QString(decode_table[i].op_name.c_str());
+                appendOperand(ret_str, args_prototype, 1);
+                ret_str += ",";
+                appendOperand(ret_str, args_prototype, 2);
+                break;
+            }
+            else
+            {
+                ret_str = QString(decode_table[i].op_name.c_str());
+                break;
+            }
         }
 
         i++;
@@ -779,5 +809,109 @@ bool sxt(Vcpu *vcpu, opcode_t opcode, args_t args)
 
 bool mfps(Vcpu *vcpu, opcode_t opcode, args_t args)
 {
+    return true;
+}
+
+bool br(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    *(vcpu->getRegAddr(7)) += 2*args.offset;
+    return true;
+}
+
+bool bne(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    if (vcpu->z == false)
+        *(vcpu->getRegAddr(7)) += 2*args.offset;
+    return true;
+}
+
+bool beq(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    if (vcpu->z == true)
+        *(vcpu->getRegAddr(7)) += 2*args.offset;
+    return true;
+}
+
+bool bge(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    if (vcpu->n ^ vcpu->v == false)
+        *(vcpu->getRegAddr(7)) += 2*args.offset;
+    return true;
+}
+
+bool blt(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    if (vcpu->n ^ vcpu->v == true)
+        *(vcpu->getRegAddr(7)) += 2*args.offset;
+    return true;
+}
+
+bool bgt(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    if ((vcpu->z||(vcpu->n^vcpu->v)) == false)
+        *(vcpu->getRegAddr(7)) += 2*args.offset;
+    return true;
+}
+
+bool ble(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    if ((vcpu->z||(vcpu->n^vcpu->v)) == true)
+        *(vcpu->getRegAddr(7)) += 2*args.offset;
+    return true;
+}
+
+bool bpl(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    if (vcpu->n == false)
+        *(vcpu->getRegAddr(7)) += 2*args.offset;
+    return true;
+}
+
+bool bmi(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    if (vcpu->n == true)
+        *(vcpu->getRegAddr(7)) += 2*args.offset;
+    return true;
+}
+
+bool bhi(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    if ((vcpu->c || vcpu->z) == false)
+        *(vcpu->getRegAddr(7)) += 2*args.offset;
+    return true;
+}
+
+bool blos(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    if ((vcpu->c || vcpu->z) == true)
+        *(vcpu->getRegAddr(7)) += 2*args.offset;
+    return true;
+}
+
+bool bvc(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    if (vcpu->v == false)
+        *(vcpu->getRegAddr(7)) += 2*args.offset;
+    return true;
+}
+
+bool bvs(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    if (vcpu->v == true)
+        *(vcpu->getRegAddr(7)) += 2*args.offset;
+    return true;
+}
+
+bool bcc(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    if (vcpu->c == false)
+        *(vcpu->getRegAddr(7)) += 2*args.offset;
+    return true;
+}
+
+bool bcs(Vcpu *vcpu, opcode_t opcode, args_t args)
+{
+    if (vcpu->c == true)
+        *(vcpu->getRegAddr(7)) += 2*args.offset;
     return true;
 }

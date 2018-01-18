@@ -32,6 +32,7 @@ struct args_t
 
     uint16_t* arg1 = 0;
     uint16_t* arg2 = 0;
+    int8_t offset = 0;
 
     bool isOneReg = false;
 };
@@ -121,3 +122,18 @@ bool mtpi(Vcpu *vcpu, opcode_t opcode, args_t args);
 bool mtpd(Vcpu *vcpu, opcode_t opcode, args_t args);
 bool sxt(Vcpu *vcpu, opcode_t opcode, args_t args);
 bool mfps(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool br(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool bne(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool beq(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool bge(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool blt(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool bgt(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool ble(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool bpl(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool bmi(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool bhi(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool blos(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool bvc(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool bvs(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool bcc(Vcpu *vcpu, opcode_t opcode, args_t args);
+bool bcs(Vcpu *vcpu, opcode_t opcode, args_t args);

@@ -103,6 +103,7 @@ args_t Emulator::fillArguments(args_t* args, args_prototype_t* args_prototype)
         }
         case CONDITIONAL:
         {
+            args->offset = (int8_t)args_prototype->arg1;
             break;
         }
         case DOUBLE_OPERAND_REG:
